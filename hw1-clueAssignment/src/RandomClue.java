@@ -89,8 +89,8 @@ public class RandomClue
 	{
 		int weapon, location, murderer;
 		Random random = new Random ();
-		weapon = plausibleMurderers.get (random.nextInt (plausibleWeapons.size ()));
-		location = plausibleMurderers.get (random.nextInt (plausibleLocations.size ()));
+		weapon = plausibleWeapons.get (random.nextInt (plausibleWeapons.size ()));
+		location = plausibleLocations.get (random.nextInt (plausibleLocations.size ()));
 		murderer = plausibleMurderers.get (random.nextInt (plausibleMurderers.size ()));
 		return new Theory (weapon, location, murderer);
 	}
