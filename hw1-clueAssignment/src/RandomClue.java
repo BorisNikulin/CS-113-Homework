@@ -30,11 +30,11 @@ public class RandomClue
 		// generate stuff especially the IntStream's rangedClose (learned
 		// something)
 		// (j8 streams are cool)
-		List<Integer> plausibleWeapons = IntStream.rangeClosed (1, TheoryItem.TOTAL_WEAPONS + 1).boxed ()
+		List<Integer> plausibleWeapons = IntStream.rangeClosed (1, TheoryItem.TOTAL_WEAPONS).boxed ()
 				.collect (Collectors.toList ());
-		List<Integer> plausibleLocations = IntStream.rangeClosed (1, TheoryItem.TOTAL_LOCATIONS + 1).boxed ()
+		List<Integer> plausibleLocations = IntStream.rangeClosed (1, TheoryItem.TOTAL_LOCATIONS).boxed ()
 				.collect (Collectors.toList ());
-		List<Integer> plausibleMurderers = IntStream.rangeClosed (1, TheoryItem.TOTAL_MURDERS + 1).boxed ()
+		List<Integer> plausibleMurderers = IntStream.rangeClosed (1, TheoryItem.TOTAL_MURDERS).boxed ()
 				.collect (Collectors.toList ());
 		Scanner keyboard = new Scanner (System.in);
 		Theory answer = null;
