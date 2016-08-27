@@ -58,15 +58,15 @@ public class RandomClue
 			
 			if (solution == 1) // incorrect weapon
 			{
-				plausibleWeapons.remove (answer.getWeapon () - 1);
+				plausibleWeapons.remove (new Integer(answer.getWeapon ()));
 			}
 			else if (solution == 2) // incorrect location
 			{
-				plausibleLocations.remove (answer.getLocation () - 1);
+				plausibleLocations.remove (new Integer(answer.getLocation ()));
 			}
 			else if (solution == 3) // incorrect murderer
 			{
-				plausibleMurderers.remove (answer.getPerson () - 1);
+				plausibleMurderers.remove (new Integer(answer.getPerson ()));
 			}
 			
 		} while (solution != 0);
