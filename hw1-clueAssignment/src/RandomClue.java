@@ -80,6 +80,14 @@ public class RandomClue
 
 	}
 
+	/**
+	 * Given lists of choices, one choice from each list is randomly selected and applied to the theory.
+	 * 
+	 * @param plausibleWeapons The weapons that are still plausible
+	 * @param plausibleLocations The locations that are still plausible
+	 * @param plausibleMurderers The murderers or persons that are still suspects/plausible
+	 * @return Theory constructed from a single random selection from each list provided
+	 */
 	public static Theory guessTheory (List<Integer> plausibleWeapons, List<Integer> plausibleLocations,
 			List<Integer> plausibleMurderers)
 	{
