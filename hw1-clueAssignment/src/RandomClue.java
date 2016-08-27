@@ -25,6 +25,7 @@ public class RandomClue
 	public static void main (String[] args)
 	{
 		int answerSet, solution;
+
 		// taken from http://stackoverflow.com/a/22829036
 		// I could of used a for loop but streams allow much nicer ways to
 		// generate stuff especially the IntStream's rangedClose (learned
@@ -46,31 +47,26 @@ public class RandomClue
 
 		jack = new AssistantJack (answerSet);
 
-//		Random random = new Random ();
-
 		do
 		{
-			// murder = random.nextInt (6) + 1;
-			// location = random.nextInt (10) + 1;
-			// weapon = random.nextInt (6) + 1;
 			answer = guessTheory (plausibleWeapons, plausibleLocations, plausibleMurderers);
 			solution = jack.checkAnswer (answer);
-			
+
 			if (solution == 1) // incorrect weapon
 			{
-				plausibleWeapons.remove (new Integer(answer.getWeapon ()));
+				plausibleWeapons.remove (new Integer (answer.getWeapon ()));
 			}
 			else if (solution == 2) // incorrect location
 			{
-				plausibleLocations.remove (new Integer(answer.getLocation ()));
+				plausibleLocations.remove (new Integer (answer.getLocation ()));
 			}
 			else if (solution == 3) // incorrect murderer
 			{
-				plausibleMurderers.remove (new Integer(answer.getPerson ()));
+				plausibleMurderers.remove (new Integer (answer.getPerson ()));
 			}
-			
+
 		} while (solution != 0);
-		// answer = new Theory(weapon, location, murder);
+
 		System.out.println ("Total Checks = " + jack.getTimesAsked () + ", Solution = " + answer);
 
 		if (jack.getTimesAsked () > 20)
