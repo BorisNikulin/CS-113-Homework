@@ -4,11 +4,11 @@ public class FizBuzz
 
 	public static void main (String[] args)
 	{
-
+		fizzBuzz (101);
 	}
 
 	/**
-	 * Prints from 0 to end exclusive the current number, or Fizz if divisible
+	 * Prints from 1 to end exclusive the current number, or Fizz if divisible
 	 * by 3, or Buzz if divisible by 5, or FizzBuzz if divisible by both 3 and 5
 	 * <p>
 	 * Ex. 0 1 2 Fizz 4 Buzz Fizz 7 8 Fizz
@@ -20,24 +20,35 @@ public class FizBuzz
 	 */
 	public static void fizzBuzz (int end)
 	{
-		for (int i = 0; i < end; i++)
+		for (int i = 1; i < end; i++)
 		{
-			if (i % 3 == 0)
-			{
-				// str = fizz
-				if (i % 5 == 0)
-				{
-					// str += buzz
-				}
-			}
-			else if (i % 5 == 0)
-			{
-				// str = buzz
-			}
-			else
-			{
-				// str = i
-			}
+//			if (i % 3 == 0)
+//			{
+//				// str = fizz
+//				if (i % 5 == 0)
+//				{
+//					// str += buzz
+//				}
+//			}
+//			else if (i % 5 == 0)
+//			{
+//				// str = buzz
+//			}
+//			else
+//			{
+//				// str = i
+//			}
+			
+			String out;
+			
+			// nested ternary from memory
+			out = i % 3 == 0 ? 
+				  	i % 5 == 0 ? "FizzBuzz" :
+				  	"Fizz" :
+				  i % 5 == 0 ? "Buzz" :
+				  Integer.toString (i);
+			
+			System.out.println (out);
 		}
 	}
 
