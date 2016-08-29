@@ -6,6 +6,10 @@ public class FizBuzz
 	public static void main (String[] args)
 	{
 		fizzBuzz ();
+		System.out.println ();
+		System.out.println ("--------------------");
+		System.out.println ();
+		fizzBuzzThatAnybodyWouldDo ();
 	}
 
 	/**
@@ -49,25 +53,6 @@ public class FizBuzz
 	{
 		for (int i = 1; i < end; i++)
 		{
-//			@formatter:off
-//			if (i % 3 == 0)
-//			{
-//				// str = fizz
-//				if (i % 5 == 0)
-//				{
-//					// str += buzz
-//				}
-//			}
-//			else if (i % 5 == 0)
-//			{
-//				// str = buzz
-//			}
-//			else
-//			{
-//				// str = i
-//			}
-//			@formatter:on
-
 			// Inspired by
 			// http://twistedoakstudios.com/blog/Post5273_how-to-read-nested-ternary-operators
 			// which I read a long time ago
@@ -85,6 +70,33 @@ public class FizBuzz
 			//@formatter:on
 
 			fizzBuzzConsumer.accept (out);
+		}
+	}
+	
+	public static void fizzBuzzThatAnybodyWouldDo()
+	{
+		for(int i = 1; i <= 100; ++i)
+		{
+			String out;
+			
+			if (i % 3 == 0)
+			{
+				out = "Fizz";
+				if (i % 5 == 0)
+				{
+					out = "FizzBuzz";
+				}
+			}
+			else if (i % 5 == 0)
+			{
+				out = "Buzz";
+			}
+			else
+			{
+				out = Integer.toString (i);
+			}
+			
+			System.out.println (out);
 		}
 	}
 
