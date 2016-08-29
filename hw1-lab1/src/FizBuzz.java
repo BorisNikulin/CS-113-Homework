@@ -1,10 +1,34 @@
+import java.util.function.Consumer;
 
 public class FizBuzz
 {
 
 	public static void main (String[] args)
 	{
-		fizzBuzz (101);
+		fizzBuzz ();
+	}
+
+	/**
+	 * Prints FizzBuzz from 1 to 100 inclusive to standard out
+	 * 
+	 * @see #fizzBuzz(int)
+	 */
+	public static void fizzBuzz ()
+	{
+		fizzBuzz (101, System.out::println);
+	}
+
+	/**
+	 * Override of {@link #fizzBuzz(int, Consumer)} that defaults the consumer
+	 * to {@code System.out::println}
+	 * 
+	 * @param end
+	 * 
+	 * @see #fizzBuzz(int, Consumer)
+	 */
+	public static void fizzBuzz (int end)
+	{
+		fizzBuzz (end, System.out::println);
 	}
 
 	/**
@@ -17,11 +41,15 @@ public class FizBuzz
 	 * 
 	 * @param end
 	 *            exclusive end point
+	 * @param fizzBuzzConsumer
+	 *            Consumer that handles the resulting ouput (a string being
+	 *            either a number, Fizz, Buzz, or FizzBuzz
 	 */
-	public static void fizzBuzz (int end)
+	public static void fizzBuzz (int end, Consumer<String> fizzBuzzConsumer)
 	{
 		for (int i = 1; i < end; i++)
 		{
+//			@formatter:off
 //			if (i % 3 == 0)
 //			{
 //				// str = fizz
@@ -38,17 +66,25 @@ public class FizBuzz
 //			{
 //				// str = i
 //			}
-			
-			String out;
-			
-			// nested ternary from memory
-			out = i % 3 == 0 ? 
-				  	i % 5 == 0 ? "FizzBuzz" :
-				  	"Fizz" :
-				  i % 5 == 0 ? "Buzz" :
-				  Integer.toString (i);
-			
-			System.out.println (out);
+//			@formatter:on
+
+			// Inspired by
+			// http://twistedoakstudios.com/blog/Post5273_how-to-read-nested-ternary-operators
+			// which I read a long time ago
+			// then I re glanced at the top to finalize the style (after I had a go at it from memory)
+			// the site does have at the bottom have the FizzBuzz in nested
+			// ternary but I did not look at that
+			// (I did, but a very long time ago (mostly why I remembered it))
+
+			//@formatter:off
+			String out = i % 3 == 0 ? 
+			        	  	  i % 5 == 0 ? "FizzBuzz"
+			        	      : "Fizz"
+			        	 : i % 5 == 0 ? "Buzz"
+			        	 : Integer.toString (i);
+			//@formatter:on
+
+			fizzBuzzConsumer.accept (out);
 		}
 	}
 
