@@ -1,5 +1,4 @@
 
-
 public class IsPowerOfTwo
 {
 
@@ -7,7 +6,7 @@ public class IsPowerOfTwo
 	{
 		// TODO Auto-generated method stub
 	}
-	
+
 	/**
 	 * @param num
 	 *            number to check if power of two
