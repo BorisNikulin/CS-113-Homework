@@ -3,12 +3,6 @@ package edu.miracosta.cs113;
 public class IsPowerOfTwo
 {
 
-	public static void main (String[] args)
-	{
-		isPowerOf2 (2);
-		// TODO Auto-generated method stub
-	}
-
 	/**
 	 * @param num
 	 *            number to check if power of two
