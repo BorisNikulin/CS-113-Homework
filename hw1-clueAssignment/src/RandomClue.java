@@ -7,10 +7,8 @@
  *
  */
 
-import java.util.List;
-import java.util.Random;
+import java.util.Iterator;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class RandomClue
@@ -24,23 +22,25 @@ public class RandomClue
 	 */
 	public static void main (String[] args)
 	{
-		int answerSet, solution;
+		int answerSet, answer, weapon, location, murderer;
+		Theory solution;
 
 		// taken from http://stackoverflow.com/a/22829036
 		// I could of used a for loop but streams allow much nicer ways to
 		// generate stuff especially the IntStream's rangedClose (learned
 		// something)
 		// (j8 streams are cool)
-		List<Integer> plausibleWeapons = IntStream.rangeClosed (1, TheoryItem.TOTAL_WEAPONS).boxed ()
-				.collect (Collectors.toList ());
-		List<Integer> plausibleLocations = IntStream.rangeClosed (1, TheoryItem.TOTAL_LOCATIONS).boxed ()
-				.collect (Collectors.toList ());
-		List<Integer> plausibleMurderers = IntStream.rangeClosed (1, TheoryItem.TOTAL_MURDERS).boxed ()
-				.collect (Collectors.toList ());
-		Scanner keyboard = new Scanner (System.in);
-		Theory answer = null;
+		// now changed to an iterator so not as plagarizy
+		Iterator<Integer> plausibleWeapons = IntStream.rangeClosed (1, TheoryItem.TOTAL_WEAPONS).iterator ();
+		Iterator<Integer> plausibleLocations = IntStream.rangeClosed (1, TheoryItem.TOTAL_LOCATIONS).iterator ();
+		Iterator<Integer> plausibleMurderers = IntStream.rangeClosed (1, TheoryItem.TOTAL_MURDERS).iterator ();
+		Scanner keyboard = new Scanner (System.in);	
 		AssistantJack jack;
 
+		weapon = plausibleWeapons.next ();
+		location = plausibleLocations.next ();
+		murderer = plausibleMurderers.next ();
+		
 		System.out.print ("Which theory would like you like to test? (1, 2, 3[random]): ");
 		answerSet = keyboard.nextInt ();
 		keyboard.close ();
@@ -49,25 +49,26 @@ public class RandomClue
 
 		do
 		{
-			answer = guessTheory (plausibleWeapons, plausibleLocations, plausibleMurderers);
-			solution = jack.checkAnswer (answer);
+			answer = jack.checkAnswer (weapon, location, murderer);
 
-			if (solution == 1) // incorrect weapon
+			if (answer == 1) // incorrect weapon
 			{
-				plausibleWeapons.remove (new Integer (answer.getWeapon ()));
+				weapon = plausibleWeapons.next ();
 			}
-			else if (solution == 2) // incorrect location
+			else if (answer == 2) // incorrect location
 			{
-				plausibleLocations.remove (new Integer (answer.getLocation ()));
+				location = plausibleLocations.next ();
 			}
-			else if (solution == 3) // incorrect murderer
+			else if (answer == 3) // incorrect murderer
 			{
-				plausibleMurderers.remove (new Integer (answer.getPerson ()));
+				murderer = plausibleMurderers.next ();
 			}
 
-		} while (solution != 0);
+		} while (answer != 0);
+		
+		solution = new Theory (weapon, location, murderer);
 
-		System.out.println ("Total Checks = " + jack.getTimesAsked () + ", Solution = " + answer);
+		System.out.println ("Total Checks = " + jack.getTimesAsked () + ", Solution = " + solution);
 
 		if (jack.getTimesAsked () > 20)
 		{
@@ -78,25 +79,6 @@ public class RandomClue
 			System.out.println ("WOW! You might as well be called Batman!");
 		}
 
-	}
-
-	/**
-	 * Given lists of choices, one choice from each list is randomly selected and applied to the theory.
-	 * 
-	 * @param plausibleWeapons The weapons that are still plausible
-	 * @param plausibleLocations The locations that are still plausible
-	 * @param plausibleMurderers The murderers or persons that are still suspects/plausible
-	 * @return Theory constructed from a single random selection from each list provided
-	 */
-	public static Theory guessTheory (List<Integer> plausibleWeapons, List<Integer> plausibleLocations,
-			List<Integer> plausibleMurderers)
-	{
-		int weapon, location, murderer;
-		Random random = new Random ();
-		weapon = plausibleWeapons.get (random.nextInt (plausibleWeapons.size ()));
-		location = plausibleLocations.get (random.nextInt (plausibleLocations.size ()));
-		murderer = plausibleMurderers.get (random.nextInt (plausibleMurderers.size ()));
-		return new Theory (weapon, location, murderer);
 	}
 
 }
