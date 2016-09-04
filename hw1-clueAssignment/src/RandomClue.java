@@ -37,9 +37,9 @@ public class RandomClue
 		Scanner keyboard = new Scanner (System.in);	
 		AssistantJack jack;
 
-		weapon = plausibleWeapons.next ();
-		location = plausibleLocations.next ();
-		murderer = plausibleMurderers.next ();
+		weapon = plausibleWeapons.nextInt ();
+		location = plausibleLocations.nextInt ();
+		murderer = plausibleMurderers.nextInt ();
 		
 		System.out.print ("Which theory would like you like to test? (1, 2, 3[random]): ");
 		answerSet = keyboard.nextInt ();
