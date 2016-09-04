@@ -7,7 +7,7 @@
  *
  */
 
-import java.util.Iterator;
+import java.util.PrimitiveIterator;
 import java.util.Scanner;
 import java.util.stream.IntStream;
 
@@ -31,9 +31,9 @@ public class RandomClue
 		// something)
 		// (j8 streams are cool)
 		// now changed to an iterator so not as plagarizy
-		Iterator<Integer> plausibleWeapons = IntStream.rangeClosed (1, TheoryItem.TOTAL_WEAPONS).iterator ();
-		Iterator<Integer> plausibleLocations = IntStream.rangeClosed (1, TheoryItem.TOTAL_LOCATIONS).iterator ();
-		Iterator<Integer> plausibleMurderers = IntStream.rangeClosed (1, TheoryItem.TOTAL_MURDERS).iterator ();
+		PrimitiveIterator.OfInt plausibleWeapons = IntStream.rangeClosed (1, TheoryItem.TOTAL_WEAPONS).iterator ();
+		PrimitiveIterator.OfInt plausibleLocations = IntStream.rangeClosed (1, TheoryItem.TOTAL_LOCATIONS).iterator ();
+		PrimitiveIterator.OfInt plausibleMurderers = IntStream.rangeClosed (1, TheoryItem.TOTAL_MURDERS).iterator ();
 		Scanner keyboard = new Scanner (System.in);	
 		AssistantJack jack;
 
@@ -53,15 +53,15 @@ public class RandomClue
 
 			if (answer == 1) // incorrect weapon
 			{
-				weapon = plausibleWeapons.next ();
+				weapon = plausibleWeapons.nextInt ();
 			}
 			else if (answer == 2) // incorrect location
 			{
-				location = plausibleLocations.next ();
+				location = plausibleLocations.nextInt ();
 			}
 			else if (answer == 3) // incorrect murderer
 			{
-				murderer = plausibleMurderers.next ();
+				murderer = plausibleMurderers.nextInt ();
 			}
 
 		} while (answer != 0);
