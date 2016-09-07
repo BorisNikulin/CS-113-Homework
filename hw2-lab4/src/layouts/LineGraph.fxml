@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<Pane xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1">
+<Pane xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.miracosta.cs113.LineGraphController">
    <children>
       <LineChart fx:id="lineGraph" prefHeight="400.0" prefWidth="600.0" title="Some Two Functions">
         <xAxis>
-          <CategoryAxis side="BOTTOM" />
+          <NumberAxis side="BOTTOM" />
         </xAxis>
         <yAxis>
           <NumberAxis side="LEFT" />

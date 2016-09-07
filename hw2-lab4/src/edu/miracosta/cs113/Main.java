@@ -10,14 +10,24 @@ import javafx.stage.Stage;
 public class Main extends Application
 {
 
+	public LineGraphController lineGraphController;
+	
 	@Override
 	public void start (Stage stage) throws Exception
 	{
-		Pane root = FXMLLoader.<Pane>load (this.getClass().getResource ("/layouts/LineGraph.fxml"));
+		FXMLLoader loader = new FXMLLoader (); // making an instance is needed to get a controller reference (static method wont do)
+		Pane root = loader.<Pane>load(this.getClass ().getResourceAsStream ("/layouts/LineGraph.fxml"));
+		lineGraphController = loader.<LineGraphController>getController ();
 		Scene scene = new Scene (root);
 		stage.setScene (scene);
+		stage.setTitle ("Comparing Two Functions");
+		
+		lineGraphController.populateLineGraph();
+		
 		stage.show ();
 	}
+	
+
 
 	public static void main (String[] args)
 	{
