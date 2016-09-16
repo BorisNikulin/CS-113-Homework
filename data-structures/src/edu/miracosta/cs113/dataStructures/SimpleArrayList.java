@@ -12,6 +12,13 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	private E[]				data;
 	private int				size;
 
+	@SuppressWarnings("unchecked")
+	public SimpleArrayList ()
+	{
+		data = (E[]) new Object[10];
+		size = 0;
+	}
+
 	/**
 	 * Call before size changes
 	 * 
@@ -36,12 +43,10 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@SuppressWarnings("unchecked")
 	private void reallocate ()
 	{
-		size = (int) (size * GROWTH_MULTIPLIER);
-
 		E[] temp = data;
-		data = (E[]) new Object[size];
+		data = (E[]) new Object[(int) (size * GROWTH_MULTIPLIER)];
 
-		copy (data, 0, temp, 0, temp.length);
+		copy (data, 0, temp, 0, size);
 		// TODO note optimizations like leaving a gap for space to add and thus
 		// not re copying that stuff again
 		// maybe for later
@@ -72,7 +77,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	 */
 	private <U> U[] copy (U[] dest, int start1, U[] source, int start2, int numElements)
 	{
-		for (int i = numElements - 1; i <= 0; --i)
+		for (int i = numElements - 1; i >= 0; --i)
 		{
 			dest[start1 + i] = source[start2 + i];
 		}
@@ -97,17 +102,17 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public void add (int index, E e)
 	{
-		if (index == size)
-		{
-			--index;
-		}
-		else
+		if (index != size)
 		{
 			boundsCheck (index);
 		}
 
 		checkReallocation ();
 
+		if(index != size)
+		{
+			copy(data, index + 1, data, index, size - index);
+		}
 		data[index] = e;
 
 		size++;
@@ -190,8 +195,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean isEmpty ()
 	{
-
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		return size == 0;
 	}
 
 	@Override
@@ -218,7 +222,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public int size ()
 	{
-		return data.length;
+		return size;
 	}
 
 	@Override
