@@ -4,6 +4,8 @@ package edu.miracosta.cs113.test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -97,8 +99,8 @@ public class SimpleArrayListTest
 	@Test
 	public void testSet ()
 	{
-		intList.set (0, 100);
-		stringList.set (0, "z");
+		assertThat (intList.set (0, 100), is (0));
+		assertThat (stringList.set (0, "z"), is ("a"));
 		assertThat (intList.size (), is (10));
 		assertThat (stringList.size (), is (5));
 		assertThat (intList.get (0), is (100));
@@ -109,8 +111,8 @@ public class SimpleArrayListTest
 	@Test
 	public void testRemoveAtIndex ()
 	{
-		intList.remove (0);
-		stringList.remove (2);
+		assertThat (intList.remove (0), is (0));
+		assertThat (stringList.remove (2), is ("c"));
 		assertThat (intList.size (), is (9));
 		assertThat (stringList.size (), is (4));
 		assertThat (intList.get (0), is (1));
@@ -123,13 +125,34 @@ public class SimpleArrayListTest
 	@Test
 	public void testRemoveObject ()
 	{
-		intList.remove (new Integer(2));
-		stringList.remove ("c");
+		assertThat (intList.remove (new Integer(2)), is (true));
+		assertThat (stringList.remove ("c"), is (true));
 		assertThat (intList.size (), is (9));
 		assertThat (stringList.size (), is (4));
 		assertThat (intList.get (2), is (3));
 		assertThat (stringList.get (2), is ("d"));
 		assertThat (intList.get (3), is (4));
 		assertThat (stringList.get (3), is ("e"));
+		assertThat (intList.remove (new Integer(99)), is (false));
+		assertThat (stringList.remove ("cat"), is (false));
+		assertThat (emptyList.remove (null), is (false));
+		emptyList.add (null);
+		assertThat (emptyList.remove (null), is (true));
+		
+	}
+	
+	@Test
+	public void testRemoveAll ()
+	{
+		intList.removeAll (Arrays.asList (2, 3, 8));
+		// [0 1 4 5 6 7 9]
+		stringList.removeAll (Arrays.asList ("b", "c", "e"));
+		//[a d]
+		assertThat (intList.size (), is (7));
+		assertThat (stringList.size (), is (2));
+		assertThat (intList.get (1), is (1));
+		assertThat (stringList.get (0), is ("a"));
+		assertThat (intList.get (2), is (4));
+		assertThat (stringList.get (1), is ("d"));
 	}
 }

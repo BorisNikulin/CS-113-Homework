@@ -245,7 +245,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean contains (Object o)
 	{
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		return indexOf (o) > -1;
 	}
 
 	@Override
@@ -263,14 +263,27 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean remove (Object o)
 	{
-		remove (indexOf (o));
-		return true;
+		int indexOf = indexOf (o);
+		if (indexOf > -1)
+		{
+			remove (indexOf (o));
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean removeAll (Collection<?> c)
 	{
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		// continuous removal blocks can be done at once instead of one by one
+		// so maybe record indices of all elements to remove and then for
+		// continuous blocks, remove all at once that would require going
+		// through a list and also probably sorting it before hand, and for that
+		// you get that in the case of removing several items in a row you dont
+		// do a shuffle of later elements for each element in the removal block,
+		// otherwise you simply wasted space recording, sorting and checking
+		c.forEach (this::remove);
+		return true;
 	}
 
 	@Override
