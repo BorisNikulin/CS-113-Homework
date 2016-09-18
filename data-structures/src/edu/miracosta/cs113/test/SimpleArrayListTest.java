@@ -119,7 +119,6 @@ public class SimpleArrayListTest
 		assertThat (stringList.get (2), is ("d"));
 		assertThat (intList.get (1), is (2));
 		assertThat (stringList.get (3), is ("e"));
-
 	}
 	
 	@Test
@@ -144,15 +143,63 @@ public class SimpleArrayListTest
 	@Test
 	public void testRemoveAll ()
 	{
-		intList.removeAll (Arrays.asList (2, 3, 8));
+		assertThat (intList.removeAll (Arrays.asList (2, 3, 8)), is (true));
 		// [0 1 4 5 6 7 9]
-		stringList.removeAll (Arrays.asList ("b", "c", "e"));
-		//[a d]
+		assertThat (stringList.removeAll (Arrays.asList ("b", "c", "e")), is (true));
+		// [a d]
 		assertThat (intList.size (), is (7));
 		assertThat (stringList.size (), is (2));
 		assertThat (intList.get (1), is (1));
 		assertThat (stringList.get (0), is ("a"));
 		assertThat (intList.get (2), is (4));
 		assertThat (stringList.get (1), is ("d"));
+		assertThat (intList.removeAll (Arrays.asList (2, 3, 8)), is (false));
+		assertThat (stringList.removeAll (Arrays.asList ("b", "c", "e")), is (false));
+		assertThat (intList.removeAll (Arrays.asList (0, 3, 8)), is (true));
+		assertThat (stringList.removeAll (Arrays.asList ("a", "c", "e")), is (true));
+	}
+	
+	@Test
+	public void testAddAll ()
+	{
+		intList.addAll (Arrays.asList (2, 3, 8));
+		// [0 1 2 3 4 5 6 7 8 9 0 2 3 8]
+		stringList.addAll (Arrays.asList ("b", "c", "e"));
+		// [a b c d e b c e]
+		assertThat (intList.size (), is (13));
+		assertThat (stringList.size (), is (8));
+		assertThat (intList.get (9), is (9));
+		assertThat (stringList.get (4), is ("e"));
+		assertThat (intList.get (10), is (2));
+		assertThat (stringList.get (5), is ("b"));
+	}
+	
+	@Test
+	public void testContains ()
+	{
+		// [0 1 2 3 4 5 6 7 8 9]
+		// [a b c d e]
+		assertThat (intList.contains (0), is (true));
+		assertThat (stringList.contains ("a"), is (true));
+		assertThat (intList.contains (8), is (true));
+		assertThat (stringList.contains ("e"), is (true));
+		assertThat (intList.contains (99), is (false));
+		assertThat (stringList.contains ("z"), is (false));
+		assertThat (emptyList.contains (null), is (false));
+		emptyList.add (null);
+		assertThat (emptyList.contains (null), is (true));
+	}
+	
+	@Test
+	public void testContainsAll ()
+	{
+		// [0 1 2 3 4 5 6 7 8 9]
+		// [a b c d e]
+		assertThat (intList.containsAll (Arrays.asList (2, 3, 8)), is (true));
+		assertThat (stringList.containsAll (Arrays.asList ("b", "c", "e")), is (true));
+		assertThat (intList.containsAll (Arrays.asList (2, 3, 9)), is (true));
+		assertThat (stringList.containsAll (Arrays.asList ("b", "c", "a")), is (true));
+		assertThat (intList.containsAll (Arrays.asList (2, 3, 11)), is (false));
+		assertThat (stringList.containsAll (Arrays.asList ("b", "c", "z")), is (false));
 	}
 }

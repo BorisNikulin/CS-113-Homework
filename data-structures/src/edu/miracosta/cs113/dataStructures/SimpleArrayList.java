@@ -14,7 +14,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 
 	static
 	{
-		assert GROWTH_MULTIPLIER > 1 : "GROWTH_MULTIPLIER (" + GROWTH_MULTIPLIER + ") need to be greater than 1";
+		assert GROWTH_MULTIPLIER > 1 : "GROWTH_MULTIPLIER (" + GROWTH_MULTIPLIER + ") needs to be greater than 1";
 	}
 
 	public SimpleArrayList ()
@@ -49,14 +49,32 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	 * Grows the data array by {@link #GROWTH_MULTIPLIER} and copies the data
 	 * over to the new array using
 	 * {@link #copyLeft(Object[], int, Object[], int, int)}
+	 * 
+	 * @see #reallocate(int)
 	 */
-	@SuppressWarnings("unchecked")
 	private void reallocate ()
 	{
-		E[] temp = data;
-		data = (E[]) new Object[(int) (size * GROWTH_MULTIPLIER)];
+		reallocate ((int) (size * GROWTH_MULTIPLIER));
+	}
 
-		copyLeft (data, 0, temp, 0, size);
+	/**
+	 * Grows the data array to newSize and copies the data over to the new array
+	 * using {@link #copyLeft(Object[], int, Object[], int, int)}
+	 * 
+	 * <p>
+	 * If newSize is less than size then the extra elements are truncated
+	 * </p>
+	 * 
+	 * @param newSize
+	 *            the new data array size
+	 */
+	@SuppressWarnings("unchecked")
+	private void reallocate (int newSize)
+	{
+		E[] temp = data;
+		data = (E[]) new Object[newSize];
+
+		copyLeft (data, 0, temp, 0, Math.min (newSize, size));
 		// TODO note optimizations like leaving a gap for space to add and thus
 		// not re copying that stuff again
 		// maybe for later
@@ -239,7 +257,9 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean addAll (Collection<? extends E> c)
 	{
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		ensureCapcity (size + c.size ());
+		c.forEach (this::add);
+		return true;
 	}
 
 	@Override
@@ -251,7 +271,12 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean containsAll (Collection<?> c)
 	{
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		boolean result = true;
+		for (Object e : c)
+		{
+			result = result && contains (e);
+		}
+		return result;
 	}
 
 	@Override
@@ -282,8 +307,15 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 		// you get that in the case of removing several items in a row you dont
 		// do a shuffle of later elements for each element in the removal block,
 		// otherwise you simply wasted space recording, sorting and checking
-		c.forEach (this::remove);
-		return true;
+		boolean didRemove = false;
+		for(Object e : c)
+		{
+			if(remove (e) && !didRemove)
+			{
+				didRemove = true;
+			}
+		}
+		return didRemove;
 	}
 
 	@Override
@@ -319,5 +351,23 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 		}
 		return (T[]) copyLeft (new Object[size], 0, data, 0, size);
 	}
+
+	public void ensureCapcity (int minCapacity)
+	{
+		if (minCapacity > data.length)
+		{
+			reallocate (minCapacity);
+		}
+	}
+
+	public void trimToSize ()
+	{
+		if (data.length > size)
+		{
+			reallocate (size);
+		}
+	}
+	
+	// toString is already inherited and is fine
 
 }
