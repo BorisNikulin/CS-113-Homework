@@ -61,7 +61,7 @@ public class Term implements Comparable<Term>
 	 * @param exponent
 	 * @see #Term(boolean, long, String, long)
 	 */
-	public Term (long coefficient, double exponent)
+	public Term (double coefficient, double exponent)
 	{
 		this (coefficient, "x", exponent);
 	}
