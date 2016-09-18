@@ -263,7 +263,8 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean remove (Object o)
 	{
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		remove (indexOf (o));
+		return true;
 	}
 
 	@Override

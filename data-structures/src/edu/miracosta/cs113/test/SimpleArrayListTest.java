@@ -107,7 +107,7 @@ public class SimpleArrayListTest
 	}
 
 	@Test
-	public void testRemoveIndex ()
+	public void testRemoveAtIndex ()
 	{
 		intList.remove (0);
 		stringList.remove (2);
@@ -118,5 +118,18 @@ public class SimpleArrayListTest
 		assertThat (intList.get (1), is (2));
 		assertThat (stringList.get (3), is ("e"));
 
+	}
+	
+	@Test
+	public void testRemoveObject ()
+	{
+		intList.remove (new Integer(2));
+		stringList.remove ("c");
+		assertThat (intList.size (), is (9));
+		assertThat (stringList.size (), is (4));
+		assertThat (intList.get (2), is (3));
+		assertThat (stringList.get (2), is ("d"));
+		assertThat (intList.get (3), is (4));
+		assertThat (stringList.get (3), is ("e"));
 	}
 }
