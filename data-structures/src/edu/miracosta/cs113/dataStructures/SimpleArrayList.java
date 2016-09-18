@@ -3,6 +3,7 @@ package edu.miracosta.cs113.dataStructures;
 
 import java.util.AbstractList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>, List<E>, Iterable<E>
@@ -200,18 +201,32 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean addAll (int index, Collection<? extends E> c)
 	{
+		ensureCapcity (size + c.size ());
+		// using copyLeft and data[]= over just add goes from O(n^2) to O(n) :D
+		if (index != size)
+		{
+			boundsCheck (index);
+			copyLeft (data, index + c.size (), data, index, size - index);
+		}
 
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		Iterator<? extends E> iterator = c.iterator ();
+		for (int i = 0; iterator.hasNext (); ++i)
+		{
+			data[index + i] = iterator.next ();
+		}
+		size += c.size ();
+		++modCount;
+		return true;
 	}
 
 	@Override
 	public E get (int index)
-	{
+	{	
 		return data[index];
 	}
 
-	// TODO maybe overide these method to take advantage of internals and not
-	// create iterators but that's not much of a speedup
+	// TODO maybe override these methods to take advantage of internals and not
+	// create iterators though that's not much of a speedup
 	// @Override
 	// public int indexOf (Object e)
 	// {
@@ -257,8 +272,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean addAll (Collection<? extends E> c)
 	{
-		ensureCapcity (size + c.size ());
-		c.forEach (this::add);
+		addAll (size, c);
 		return true;
 	}
 
@@ -300,6 +314,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean removeAll (Collection<?> c)
 	{
+		// TODO fun optimization maybe?
 		// continuous removal blocks can be done at once instead of one by one
 		// so maybe record indices of all elements to remove and then for
 		// continuous blocks, remove all at once that would require going
@@ -308,9 +323,9 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 		// do a shuffle of later elements for each element in the removal block,
 		// otherwise you simply wasted space recording, sorting and checking
 		boolean didRemove = false;
-		for(Object e : c)
+		for (Object e : c)
 		{
-			if(remove (e) && !didRemove)
+			if (remove (e) && !didRemove)
 			{
 				didRemove = true;
 			}
@@ -321,7 +336,20 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	@Override
 	public boolean retainAll (Collection<?> c)
 	{
-		throw new UnsupportedOperationException ("I'll get around to this at some point if I need it. :D");
+		// TODO replace restrained with a linked list since index is not needed,
+		// but fast end insertion
+		SimpleArrayList<E> retained = new SimpleArrayList<> (size);
+		for (int i = 0; i < size; ++i)
+		{
+			if (c.contains (data[i]))
+			{
+				retained.add (data[i]);
+			}
+		}
+		int oldSize = size;
+		data = retained.data;
+		size = retained.size;
+		return retained.size != oldSize;
 	}
 
 	@Override
@@ -367,7 +395,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 			reallocate (size);
 		}
 	}
-	
-	// toString is already inherited and is fine
+
+	// toString is already inherited and is fine and so is equals
 
 }

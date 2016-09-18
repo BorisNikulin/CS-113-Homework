@@ -120,11 +120,11 @@ public class SimpleArrayListTest
 		assertThat (intList.get (1), is (2));
 		assertThat (stringList.get (3), is ("e"));
 	}
-	
+
 	@Test
 	public void testRemoveObject ()
 	{
-		assertThat (intList.remove (new Integer(2)), is (true));
+		assertThat (intList.remove (new Integer (2)), is (true));
 		assertThat (stringList.remove ("c"), is (true));
 		assertThat (intList.size (), is (9));
 		assertThat (stringList.size (), is (4));
@@ -132,14 +132,14 @@ public class SimpleArrayListTest
 		assertThat (stringList.get (2), is ("d"));
 		assertThat (intList.get (3), is (4));
 		assertThat (stringList.get (3), is ("e"));
-		assertThat (intList.remove (new Integer(99)), is (false));
+		assertThat (intList.remove (new Integer (99)), is (false));
 		assertThat (stringList.remove ("cat"), is (false));
 		assertThat (emptyList.remove (null), is (false));
 		emptyList.add (null);
 		assertThat (emptyList.remove (null), is (true));
-		
+
 	}
-	
+
 	@Test
 	public void testRemoveAll ()
 	{
@@ -158,13 +158,13 @@ public class SimpleArrayListTest
 		assertThat (intList.removeAll (Arrays.asList (0, 3, 8)), is (true));
 		assertThat (stringList.removeAll (Arrays.asList ("a", "c", "e")), is (true));
 	}
-	
+
 	@Test
-	public void testAddAll ()
+	public void testAddAllAtEnd ()
 	{
-		intList.addAll (Arrays.asList (2, 3, 8));
+		assertThat (intList.addAll (Arrays.asList (2, 3, 8)), is (true));
 		// [0 1 2 3 4 5 6 7 8 9 0 2 3 8]
-		stringList.addAll (Arrays.asList ("b", "c", "e"));
+		assertThat (stringList.addAll (Arrays.asList ("b", "c", "e")), is (true));
 		// [a b c d e b c e]
 		assertThat (intList.size (), is (13));
 		assertThat (stringList.size (), is (8));
@@ -173,7 +173,22 @@ public class SimpleArrayListTest
 		assertThat (intList.get (10), is (2));
 		assertThat (stringList.get (5), is ("b"));
 	}
-	
+
+	@Test
+	public void testAddAllAtIndex ()
+	{
+		assertThat (intList.addAll (0, Arrays.asList (2, 3, 8)), is (true));
+		// [2 3 8 0 1 2 3 4 5 6 7 8 9 0]
+		assertThat (stringList.addAll (0, Arrays.asList ("b", "c", "e")), is (true));
+		// [b c e a b c d e]
+		assertThat (intList.size (), is (13));
+		assertThat (stringList.size (), is (8));
+		assertThat (intList.get (0), is (2));
+		assertThat (stringList.get (0), is ("b"));
+		assertThat (intList.get (3), is (0));
+		assertThat (stringList.get (3), is ("a"));
+	}
+
 	@Test
 	public void testContains ()
 	{
@@ -189,7 +204,7 @@ public class SimpleArrayListTest
 		emptyList.add (null);
 		assertThat (emptyList.contains (null), is (true));
 	}
-	
+
 	@Test
 	public void testContainsAll ()
 	{
@@ -201,5 +216,34 @@ public class SimpleArrayListTest
 		assertThat (stringList.containsAll (Arrays.asList ("b", "c", "a")), is (true));
 		assertThat (intList.containsAll (Arrays.asList (2, 3, 11)), is (false));
 		assertThat (stringList.containsAll (Arrays.asList ("b", "c", "z")), is (false));
+	}
+	
+	@Test
+	public void testRetainAll ()
+	{
+		// [0 1 2 3 4 5 6 7 8 9]
+		// [a b c d e]
+		assertThat (intList.retainAll (intList), is (false));
+		assertThat (stringList.retainAll (stringList), is (false));
+		assertThat (intList.size (), is (10));
+		assertThat (stringList.size (), is (5));
+		assertThat (intList.retainAll (Arrays.asList (2, 3, 9)), is (true));
+		assertThat (stringList.retainAll (Arrays.asList ("b", "c", "a")), is (true));
+		assertThat (intList.size (), is (3));
+		assertThat (stringList.size (), is (3));
+		assertThat (intList.get (0), is (2));
+		assertThat (stringList.get (0), is ("a"));
+		assertThat (intList.get (1), is (3));
+		assertThat (stringList.get (1), is ("b"));
+		assertThat (intList.get (2), is (9));
+		assertThat (stringList.get (2), is ("c"));
+		assertThat (intList.retainAll (Arrays.asList (2, 3, 11)), is (true));
+		assertThat (stringList.retainAll (Arrays.asList ("b", "c", "z")), is (true));
+		assertThat (intList.size (), is (2));
+		assertThat (stringList.size (), is (2));
+		assertThat (intList.get (0), is (2));
+		assertThat (stringList.get (0), is ("b"));
+		assertThat (intList.get (1), is (3));
+		assertThat (stringList.get (1), is ("c"));
 	}
 }
