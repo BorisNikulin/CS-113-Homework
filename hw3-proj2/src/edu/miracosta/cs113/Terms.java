@@ -69,13 +69,13 @@ public class Terms
 				}
 				else if (comparisonResult > 0)
 				{
-					result.add (left);
-					rightItr.previous ();
+					result.add (right);
+					leftItr.previous ();
 				}
 				else
 				{
-					result.add (right);
-					leftItr.previous ();
+					result.add (left);
+					rightItr.previous ();
 				}
 			}
 			else if (leftItr.hasNext ())
