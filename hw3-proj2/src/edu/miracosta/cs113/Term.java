@@ -26,8 +26,8 @@ public class Term implements Comparable<Term>
 	 * comparator returns 0 in that case and not 0 in others.
 	 * </p>
 	 * <p>
-	 * Returns natural String order. If String order is 0 then returns
-	 * natural double order of exponent.
+	 * Returns natural String order. If String order is 0 then returns natural
+	 * double order of exponent.
 	 * </p>
 	 */
 	public static final Comparator<Term>	COMPARE_BY_VAR_THEN_EXPONENT;
@@ -167,20 +167,27 @@ public class Term implements Comparable<Term>
 		return true;
 	}
 
-	/**
-	 * Adds two polynomial terms together if it can.
-	 * 
-	 * @param term1
-	 * @param term2
-	 * @return The terms added together as a {@link Term} or null if not able to be combined.
-	 */
-	public static Term add (Term term1, Term term2)
+	@Override
+	public String toString ()
 	{
-		if (COMPARE_BY_VAR_THEN_EXPONENT.compare (term1, term2) != 0)
+		return String.format ("%+.2f(%s)^%+.2f", coefficient, variable, exponent);
+	}
+
+	/**
+	 * Adds two polynomial terms together if possible.
+	 * 
+	 * @param otherTerm
+	 * @param term2
+	 * @return The terms added together as a {@link Term} or null if not able to
+	 *         be combined.
+	 */
+	public Term add (Term otherTerm)
+	{
+		if (COMPARE_BY_VAR_THEN_EXPONENT.compare (this, otherTerm) != 0)
 		{
 			return null;
 		}
-		return new Term (term1.coefficient + term2.coefficient, term1.variable, term1.exponent);
+		return new Term (this.coefficient + otherTerm.coefficient, this.variable, this.exponent);
 	}
 
 	/**
