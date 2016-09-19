@@ -37,13 +37,30 @@ public class Terms
 		return term1.add (term2);
 	}
 
+	/**
+	 * Adds like terms from both lists by merging and adding adjacent terms thus
+	 * both lists should be sorted before hand.
+	 * 
+	 * @param terms1
+	 * @param terms2
+	 * @return A list with like terms added
+	 */
 	@SuppressWarnings("unchecked")
 	public static List<Term> add (List<Term> terms1, List<Term> terms2)
 	{
-		// hmm I cant figure out how to get the two methods to play together nicely (generics pls -_-)
-		return combineAdjecentTerms((List<Term>) merge (terms1, terms2, Term.COMPARE_BY_VAR_THEN_EXPONENT));
+		// hmm I cant figure out how to get the two methods to play together
+		// nicely (generics pls -_-)
+		return combineAdjecentTerms ((List<Term>) merge (terms1, terms2, Term.COMPARE_BY_VAR_THEN_EXPONENT));
 	}
 
+	/**
+	 * Merges two lists together like in merge sort.
+	 * 
+	 * @param list1
+	 * @param list2
+	 * @param comparator
+	 * @return A merged list that is sorted if both inputs are sorted
+	 */
 	public static <T> List<? super T> merge (List<? extends T> list1, List<? extends T> list2,
 			Comparator<? super T> comparator)
 	{
@@ -91,6 +108,19 @@ public class Terms
 		return result;
 	}
 
+	/**
+	 * Like terms that are adjacent to each other are added to produce a list
+	 * with like terms added together.
+	 * 
+	 * <p>
+	 * Note adjacent terms meant that [2x^2, 2x^1, 2x^2] will combine to [2x^2,
+	 * 2x^1, 2x^2], but [2x^2, 2x^2, 2x^1] will combine to [4x^2, 2x^1].
+	 * </p>
+	 * 
+	 * @param list
+	 *            a Term list with like terms adjacent to each other
+	 * @return A list with adjacent like terms added
+	 */
 	public static List<Term> combineAdjecentTerms (List<Term> list)
 	{
 		List<Term> result = new ArrayList<> (); // TODO make and use linked list
@@ -174,11 +204,42 @@ public class Terms
 //	}
 //	@formatter:on
 
+	/**
+	 * Parse text into a list of Terms.
+	 * 
+	 * <p>
+	 * This method is simplified from {@link #parse(String, boolean)} where
+	 * requireCarret is true. See that method for full details.
+	 * </p>
+	 * 
+	 * @param text
+	 *            the text to parse
+	 * @return List of terms
+	 */
 	public static List<Term> parse (String text)
 	{
 		return parse (text, true);
 	}
 
+	/**
+	 * Parse text into a list of Terms.
+	 * 
+	 * <p>
+	 * A valid term is as follows: (number)(letters)^(number) where parentheses
+	 * are optional, numbers can start with any of the character inside the
+	 * brackets {@code [+-.,]}, the letters can have capitals but are case
+	 * sensitive, and depending on the boolean requireCarret, the carret [^] can
+	 * be included or not, or be strictly required.
+	 * </p>
+	 * 
+	 * @param text
+	 *            the text to parse
+	 * @param requireCarret
+	 *            whether the carret (^) is an optional character when parsing
+	 * @return List of terms
+	 * 
+	 * @see #parse(String)
+	 */
 	public static List<Term> parse (String text, boolean requireCarret)
 	{
 		// TODO probably should use a list here since for terms it's more about
