@@ -69,8 +69,6 @@ public class Term implements Comparable<Term>
 	/**
 	 * Full constructor for things like 2x<sup>2</sup> or -21y<sup>34.5</sup>
 	 * 
-	 * @param isPositive
-	 *            sign on the coefficient
 	 * @param coefficient
 	 * @param variable
 	 *            like x or y

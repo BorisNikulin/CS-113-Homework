@@ -186,9 +186,9 @@ public class Terms
 		// soooooooooooooooooooooooo yeah)
 		List<Term> terms = new SimpleArrayList<> ();
 		Pattern termPattern = Pattern
-				.compile ("(?:\\(([-+]?\\d+)\\)|([-+]?\\d+))(?:\\(([a-zA-Z]+)\\)|([a-zA-Z]+))"
+				.compile ("(?:\\(([-+]?\\.?\\d+)\\)|([-+]?\\.?\\d+))(?:\\(([a-zA-Z]+)\\)|([a-zA-Z]+))"
 						+ (requireCarret ? "\\^" : "\\^?")
-						+ "(?:\\(([-+]?\\d+)\\)|([-+]?\\d+))[^0-9-+]*");
+						+ "(?:\\(([-+]?\\.?\\d+)\\)|([-+]?\\.?\\d+))[^0-9-+(.,]*");
 		// group 1 or 2 is coefficient (which ever is not null)
 		// group 3 or 4 is variable (which ever is not null)
 		// group 5 or 6 is exponent (which ever is not null)
