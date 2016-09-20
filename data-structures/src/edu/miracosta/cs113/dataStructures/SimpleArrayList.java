@@ -1,17 +1,27 @@
 
 package edu.miracosta.cs113.dataStructures;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.RandomAccess;
 
-public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>, List<E>, Iterable<E>
+public class SimpleArrayList<E> extends AbstractList<E>
+		implements
+			Collection<E>,
+			List<E>,
+			Iterable<E>,
+			RandomAccess,
+			Serializable
 {
-	private static double	GROWTH_MULTIPLIER	= 3.0 / 2.0;
+	private static final long	serialVersionUID	= 3707361473005116102L;
 
-	private E[]				data;
-	private int				size;
+	private static double		GROWTH_MULTIPLIER	= 3.0 / 2.0;
+
+	private E[]					data;
+	private int					size;
 
 	static
 	{
@@ -22,10 +32,10 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	{
 		this (10);
 	}
-	
+
 	public SimpleArrayList (Collection<? extends E> c)
 	{
-		this(c.size ());
+		this (c.size ());
 		addAll (c);
 	}
 
@@ -227,7 +237,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 
 	@Override
 	public E get (int index)
-	{	
+	{
 		return data[index];
 	}
 
@@ -315,6 +325,20 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	protected void removeRange (int fromIndex, int toIndex)
+	{
+		if (toIndex - fromIndex == size)
+		{
+			size = 0;
+		}
+		else
+		{
+			copyRight(data, fromIndex, data, toIndex, size - toIndex);
+			size -= (toIndex - fromIndex);
+		}
 	}
 
 	@Override
