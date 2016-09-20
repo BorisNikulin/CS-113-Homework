@@ -22,6 +22,12 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	{
 		this (10);
 	}
+	
+	public SimpleArrayList (Collection<? extends E> c)
+	{
+		this(c.size ());
+		addAll (c);
+	}
 
 	@SuppressWarnings("unchecked")
 	public SimpleArrayList (int initialCapacity)
