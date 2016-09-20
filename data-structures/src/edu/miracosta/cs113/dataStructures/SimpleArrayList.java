@@ -188,7 +188,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	 */
 	private void boundsCheck (int index)
 	{
-		if (index < 0 || index >= size)
+		if (index >= size || index < 0)
 		{
 			throw new IndexOutOfBoundsException (index + "is not in bounds of [0, " + size + "]");
 		}
