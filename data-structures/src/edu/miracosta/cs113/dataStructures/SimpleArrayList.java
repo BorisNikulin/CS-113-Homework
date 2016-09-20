@@ -47,7 +47,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	}
 
 	/**
-	 * Call before size changes
+	 * Call before size changes.
 	 * 
 	 * @return whether reallocation took place
 	 */
@@ -65,7 +65,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	/**
 	 * Grows the data array by {@link #GROWTH_MULTIPLIER} and copies the data
 	 * over to the new array using
-	 * {@link #copyLeft(Object[], int, Object[], int, int)}
+	 * {@link #copyLeft(Object[], int, Object[], int, int)}.
 	 * 
 	 * @see #reallocate(int)
 	 */
@@ -180,7 +180,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	}
 
 	/**
-	 * Throws on out of bounds, otherwise returns nothing
+	 * Throws on out of bounds, otherwise returns nothing.
 	 * 
 	 * @param index
 	 *            index to check
