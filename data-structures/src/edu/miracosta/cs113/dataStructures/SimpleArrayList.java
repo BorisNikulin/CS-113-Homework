@@ -65,7 +65,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	/**
 	 * Grows the data array by {@link #GROWTH_MULTIPLIER} and copies the data
 	 * over to the new array using
-	 * {@link #copyLeft(Object[], int, Object[], int, int)}.
+	 * {@link #copy(Object[], int, Object[], int, int)}.
 	 * 
 	 * @see #reallocate(int)
 	 */
@@ -76,7 +76,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 
 	/**
 	 * Grows the data array to newSize and copies the data over to the new array
-	 * using {@link #copyLeft(Object[], int, Object[], int, int)}
+	 * using {@link #copy(Object[], int, Object[], int, int)}
 	 * 
 	 * <p>
 	 * If newSize is less than size then the extra elements are truncated
@@ -91,7 +91,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 		E[] temp = data;
 		data = (E[]) new Object[newSize];
 
-		copyLeft (data, 0, temp, 0, Math.min (newSize, size));
+		copy (data, 0, temp, 0, Math.min (newSize, size));
 		// TODO note optimizations like leaving a gap for space to add and thus
 		// not re copying that stuff again
 		// maybe for later
@@ -106,12 +106,11 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	 * to.
 	 * </p>
 	 * <p>
-	 * Can copy to and from the same array if start1 >= start2
+	 * Can copy to and from the same array without problems.
 	 * </p>
 	 * <p>
 	 * The pre-reqs formally:
-	 * {@code assert dest.length >= numElements - start1 && source.length >= numElements - start2;}
-	 * and {@code if (dest == source) assert start1 >= start2;}
+	 * {@code assert dest.length >= numElements + start1 && source.length >= numElements + start2;}
 	 * </p>
 	 * 
 	 * @param dest
@@ -128,53 +127,23 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	 * @return the destination array
 	 * @see #copyRight(Object[], int, Object[], int, int)
 	 */
-	private <T> T[] copyLeft (T[] dest, int start1, T[] source, int start2, int numElements)
+	private <T> T[] copy (T[] dest, int start1, T[] source, int start2, int numElements)
 	{
-		assert (dest.length >= numElements - start1
-				&& source.length >= numElements - start2) : "exceeded start and or dest array";
-		if (dest == source) assert start1 >= start2 : "use copyRight version";
-
-		for (int i = numElements - 1; i >= 0; --i)
+		assert (dest.length >= numElements + start1
+				&& source.length >= numElements + start2) : "exceeded start and or dest array";
+		if (start1 <= start2)
 		{
-			dest[start1 + i] = source[start2 + i];
+			for (int i = 0; i < numElements; ++i)
+			{
+				dest[start1 + i] = source[start2 + i];
+			}
 		}
-		return dest;
-	}
-
-	/**
-	 * Transfers from start to end of one array to another like memncpy in c
-	 * from the right ie. from the start to the end.
-	 * 
-	 * <p>
-	 * Requires that the destination has enough space like memncpy.
-	 * </p>
-	 * <p>
-	 * Can copy to and from the same array if start1 <= start2
-	 * </p>
-	 * 
-	 * @param dest
-	 *            destination array (must have sufficient space)
-	 * @param start1
-	 *            where to start copying to
-	 * @param source
-	 *            source array
-	 * @param start2
-	 *            where to start copying from
-	 * @param numElements
-	 *            the number of elements to copy
-	 * 
-	 * @return the destination array
-	 * @see #copyLeft(Object[], int, Object[], int, int)
-	 */
-	private <T> T[] copyRight (T[] dest, int start1, T[] source, int start2, int numElements)
-	{
-		assert (dest.length >= numElements - start1
-				&& source.length >= numElements - start2) : "exceeded start and or dest array";
-		if (dest == source) assert start1 <= start2 : "use copyLeft version";
-
-		for (int i = 0; i < numElements; ++i)
+		else
 		{
-			dest[start1 + i] = source[start2 + i];
+			for (int i = numElements - 1; i >= 0; --i)
+			{
+				dest[start1 + i] = source[start2 + i];
+			}
 		}
 		return dest;
 	}
@@ -206,7 +175,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 
 		if (index != size)
 		{
-			copyLeft (data, index + 1, data, index, size - index);
+			copy (data, index + 1, data, index, size - index);
 		}
 		data[index] = e;
 
@@ -222,7 +191,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 		if (index != size)
 		{
 			boundsCheck (index);
-			copyLeft (data, index + c.size (), data, index, size - index);
+			copy (data, index + c.size (), data, index, size - index);
 		}
 
 		Iterator<? extends E> iterator = c.iterator ();
@@ -263,7 +232,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	public E remove (int index)
 	{
 		E temp = data[index];
-		copyRight (data, index, data, index + 1, size - index - 1);
+		copy (data, index, data, index + 1, size - index - 1);
 		--size;
 		++modCount;
 		return temp;
@@ -326,7 +295,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 		}
 		return false;
 	}
-	
+
 	@Override
 	protected void removeRange (int fromIndex, int toIndex)
 	{
@@ -336,7 +305,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 		}
 		else
 		{
-			copyRight(data, fromIndex, data, toIndex, size - toIndex);
+			copy (data, fromIndex, data, toIndex, size - toIndex);
 			size -= (toIndex - fromIndex);
 		}
 	}
@@ -400,14 +369,14 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	{
 		if (a.length >= size)
 		{
-			copyLeft (a, 0, (T[]) data, 0, size);
+			copy (a, 0, (T[]) data, 0, size);
 			if (a.length > size)
 			{
 				a[a.length - 1] = null;
 			}
 			return a;
 		}
-		return (T[]) copyLeft (new Object[size], 0, data, 0, size);
+		return (T[]) copy (new Object[size], 0, data, 0, size);
 	}
 
 	public void ensureCapcity (int minCapacity)
