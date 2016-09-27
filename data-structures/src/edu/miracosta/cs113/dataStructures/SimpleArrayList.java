@@ -140,7 +140,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 		if (index != size)
 		{
 			boundsCheck (index);
-			System.arraycopy (data, index, data, index  + c.size (), size - index);
+			System.arraycopy (data, index, data, index + c.size (), size - index);
 		}
 
 		Iterator<? extends E> iterator = c.iterator ();
@@ -182,6 +182,9 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	{
 		E temp = data[index];
 		System.arraycopy (data, index + 1, data, index, size - index - 1);
+		// saw in java's implementation (to set to null)
+		// allows the gc to collect garbage
+		data[size - 1] = null;
 		--size;
 		++modCount;
 		return temp;
@@ -250,12 +253,24 @@ public class SimpleArrayList<E> extends AbstractList<E>
 	{
 		if (toIndex - fromIndex == size)
 		{
+			reallocate (0);
 			size = 0;
 		}
-		else
+		else if (toIndex == size)
 		{
+			for(int i = fromIndex; i <= toIndex; ++i)
+			{
+				data[i] = null;
+			}
+		}
+		else {
 			System.arraycopy (data, toIndex, data, fromIndex, size - toIndex);
+			for(int i = toIndex; i < size; ++i)
+			{
+				data[i] = null;
+			}
 			size -= (toIndex - fromIndex);
+			
 		}
 	}
 
@@ -325,7 +340,7 @@ public class SimpleArrayList<E> extends AbstractList<E>
 			}
 			return a;
 		}
-		T[] returnArray =  (T[]) new Object[size];
+		T[] returnArray = (T[]) new Object[size];
 		System.arraycopy (data, 0, returnArray, 0, size);
 		return returnArray;
 	}
