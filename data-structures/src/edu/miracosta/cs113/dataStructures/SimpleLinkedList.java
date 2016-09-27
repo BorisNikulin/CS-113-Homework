@@ -22,8 +22,17 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		tail.prev = head;
 	}
 
+	/**
+	 * @param index
+	 * @return the node at the index or the tail if size is 0
+	 */
 	private Node<E> node (int index)
 	{
+		if(index == size)
+		{
+			return tail;
+		}
+		
 		Node<E> node;
 		if (index <= (size >> 1))
 		{
@@ -53,29 +62,14 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		return node;
 	}
 
-	private void addBefore (Node<E> succ, E element)
+	private void addAfter (Node<E> pred, E element)
 	{
-		Node<E> pred = succ.prev;
+		Node<E> succ = pred.next;
 		Node<E> newNode = new Node<> (pred, element, succ);
 		pred.next = newNode;
 		succ.prev = newNode;
 		++size;
 		++modCount;
-	}
-
-	/**
-	 * Throws on out of bounds, otherwise returns nothing.
-	 * 
-	 * @param index
-	 *            index to check
-	 * @throws IndexOutOfBoundsException
-	 */
-	private void boundsCheck (int index)
-	{
-		if (index >= size || index < 0)
-		{
-			throw new IndexOutOfBoundsException (index + "is not in bounds of [0, " + size + "]");
-		}
 	}
 
 	@Override
@@ -114,7 +108,7 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 	 * back all SimpleLinkedList list methods
 	 * 
 	 * <p>
-	 * This Class only (well mostly in jest (but still >:|) exists and is not
+	 * This Class only (well mostly in jest (but still >:| )) exists and is not
 	 * anonymous because damn shadowing. -_-
 	 * </p>
 	 * 
@@ -135,7 +129,8 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		@Override
 		public void add (E e)
 		{
-			addBefore (lastReturned.next, e); // modCount is already incremented
+			addAfter (lastReturned, e); // modCount is already incremented
+			next ();
 		}
 
 		@Override
@@ -155,6 +150,7 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		{
 			// TODO bounds check
 			lastReturned = lastReturned.next;
+			++index;
 			return lastReturned.data;
 		}
 
@@ -169,6 +165,7 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		{
 			// TODO bounds check
 			lastReturned = lastReturned.prev;
+			--index;
 			return lastReturned.data;
 		}
 
