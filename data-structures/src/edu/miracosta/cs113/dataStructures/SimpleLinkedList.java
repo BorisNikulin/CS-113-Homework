@@ -13,15 +13,54 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 	private int		size;
 
 	{
+		// hmm
+		// to dummy
+		// or not to dummy ...
 		head = new Node<> (null, null, null);
 		tail = new Node<> (null, null, null);
 		head.next = tail;
 		tail.prev = head;
 	}
 
-	private Node<E> getNode (int index)
+	private Node<E> node (int index)
 	{
+		Node<E> node;
+		if (index <= (size >> 1))
+		{
+			node = head.next;
+			for (int i = 0; i < index; ++i)
+			{
+				node = node.next;
+			}
+		}
+		else
+		{
+			node = tail.prev; // header.prev <- smart java
+			// I did check out the actual linked list implementation in java
+			// (that's where the bitshift came from (instead of using divide by
+			// 2)) but anyway the whole single dummy and single ended/marked
+			// node was pretty clever and allows some nice code...
+			// but I'm just going to make it dumb and simple...
+			// also going to take the name simplification and instead of using
+			// getNode I'll call it just node
+			// although the java8 linked list seems to not be circular anymore
+			// (in the backend) hmmm... anyway neat either way
+			for (int i = size - 1; i > index; --i)
+			{
+				node = node.prev;
+			}
+		}
+		return node;
+	}
 
+	private void addBefore (Node<E> succ, E element)
+	{
+		Node<E> pred = succ.prev;
+		Node<E> newNode = new Node<> (pred, element, succ);
+		pred.next = newNode;
+		succ.prev = newNode;
+		++size;
+		++modCount;
 	}
 
 	/**
@@ -42,89 +81,6 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 	@Override
 	public ListIterator<E> listIterator (int index)
 	{
-		/**
-		 * This Class only exists and is not anonymous because damn shadowing.
-		 * -_-
-		 * 
-		 * @author Boris
-		 *
-		 */
-		class ListItr implements ListIterator<E>
-		{
-			private Node<E>	next			= head;
-			private Node<E>	lastReturned	= null;
-			private int		index;
-
-			public ListItr (int index)
-			{
-				this.index = index;
-			}
-
-			@Override
-			public void add (E e)
-			{
-				// TODO Auto-generated method stub
-				++modCount;
-			}
-
-			@Override
-			public boolean hasNext ()
-			{
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean hasPrevious ()
-			{
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public E next ()
-			{
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public int nextIndex ()
-			{
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public E previous ()
-			{
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public int previousIndex ()
-			{
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			@Override
-			public void remove ()
-			{
-				// TODO Auto-generated method stub
-				++modCount;
-			}
-
-			@Override
-			public void set (E e)
-			{
-				// TODO Auto-generated method stub
-
-			}
-
-		}
-
 		return new ListItr (index);
 	}
 
@@ -140,11 +96,16 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		public Node<E>	next;
 		public Node<E>	prev;
 
-		public Node (E data, Node<E> prev, Node<E> next)
+		public Node (Node<E> prev, E data, Node<E> next)
 		{
 			this.data = data;
-			next = null;
-			prev = null;
+			this.next = next;
+			this.prev = prev;
+		}
+
+		public String toString ()
+		{
+			return (data != null) ? data.toString () : "null";
 		}
 	}
 
@@ -153,70 +114,68 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 	 * back all SimpleLinkedList list methods
 	 * 
 	 * <p>
-	 * This Class only exists and is not anonymous because damn shadowing. -_-
+	 * This Class only (well mostly in jest (but still >:|) exists and is not
+	 * anonymous because damn shadowing. -_-
 	 * </p>
 	 * 
 	 * @author Boris
 	 *
 	 */
-	class ListItr implements ListIterator<E>
+	private class ListItr implements ListIterator<E>
 	{
-		private Node<E>	next			= head;
-		private Node<E>	lastReturned	= null;
+		private Node<E>	lastReturned;
 		private int		index;
 
 		public ListItr (int index)
 		{
+			lastReturned = node (index).prev;
 			this.index = index;
 		}
 
 		@Override
 		public void add (E e)
 		{
-			// TODO Auto-generated method stub
-			++modCount;
+			addBefore (lastReturned.next, e); // modCount is already incremented
 		}
 
 		@Override
 		public boolean hasNext ()
 		{
-			// TODO Auto-generated method stub
-			return false;
+			return index != size;
 		}
 
 		@Override
 		public boolean hasPrevious ()
 		{
-			// TODO Auto-generated method stub
-			return false;
+			return index != 0;
 		}
 
 		@Override
 		public E next ()
 		{
-			// TODO Auto-generated method stub
-			return null;
+			// TODO bounds check
+			lastReturned = lastReturned.next;
+			return lastReturned.data;
 		}
 
 		@Override
 		public int nextIndex ()
 		{
-			// TODO Auto-generated method stub
-			return 0;
+			return index + 1;
 		}
 
 		@Override
 		public E previous ()
 		{
-			// TODO Auto-generated method stub
-			return null;
+			// TODO bounds check
+			lastReturned = lastReturned.prev;
+			return lastReturned.data;
 		}
 
 		@Override
 		public int previousIndex ()
 		{
-			// TODO Auto-generated method stub
-			return 0;
+			return index - 1;
 		}
 
 		@Override
@@ -229,9 +188,7 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		@Override
 		public void set (E e)
 		{
-			// TODO Auto-generated method stub
-
+			lastReturned.data = e;
 		}
 	}
-
 }
