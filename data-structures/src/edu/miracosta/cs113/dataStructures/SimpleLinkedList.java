@@ -5,6 +5,7 @@ import java.util.AbstractSequentialList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Collection<E>, List<E>, Iterable<E>
 {
@@ -28,11 +29,6 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 	 */
 	private Node<E> node (int index)
 	{
-		if(index == size)
-		{
-			return tail;
-		}
-		
 		Node<E> node;
 		if (index <= (size >> 1))
 		{
@@ -70,6 +66,15 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		succ.prev = newNode;
 		++size;
 		++modCount;
+	}
+
+	private E removeNode (Node<E> removeNode)
+	{
+		removeNode.prev.next = removeNode.next;
+		removeNode.next.prev = removeNode.prev;
+		--size;
+		++modCount;
+		return removeNode.data;
 	}
 
 	@Override
@@ -118,74 +123,93 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 	private class ListItr implements ListIterator<E>
 	{
 		private Node<E>	lastReturned;
-		private int		index;
+		private Node<E>	next;
+		private int		nextIndex;
 
 		public ListItr (int index)
 		{
-			lastReturned = node (index).prev;
-			this.index = index;
+			next = (index == size) ? tail : node (index);
+			lastReturned = null;
+			this.nextIndex = index;
 		}
 
 		@Override
 		public void add (E e)
 		{
-			addAfter (lastReturned, e); // modCount is already incremented
-			next ();
+			addAfter (next.prev, e); // modCount is already incremented
 		}
 
 		@Override
 		public boolean hasNext ()
 		{
-			return index != size;
+			return nextIndex < size;
 		}
 
 		@Override
 		public boolean hasPrevious ()
 		{
-			return index != 0;
+			return nextIndex > 0;
 		}
 
 		@Override
 		public E next ()
 		{
-			// TODO bounds check
-			lastReturned = lastReturned.next;
-			++index;
+			if(!hasNext ())
+			{
+				throw new NoSuchElementException();
+			}
+			lastReturned = next;
+			next = next.next;
+			++nextIndex;
 			return lastReturned.data;
 		}
 
 		@Override
 		public int nextIndex ()
 		{
-			return index + 1;
+			return nextIndex;
 		}
 
 		@Override
 		public E previous ()
 		{
-			// TODO bounds check
-			lastReturned = lastReturned.prev;
-			--index;
+			if(!hasPrevious ())
+			{
+				throw new NoSuchElementException();
+			}
+			lastReturned = next.prev;
+			next = next.prev;
+			--nextIndex;
 			return lastReturned.data;
 		}
 
 		@Override
 		public int previousIndex ()
 		{
-			return index - 1;
+			return nextIndex - 1;
 		}
 
 		@Override
 		public void remove ()
 		{
-			// TODO Auto-generated method stub
-			++modCount;
+			if(lastReturned == null)
+			{
+				throw new IllegalStateException();
+			}
+			removeNode (lastReturned);
+			--nextIndex;
+			lastReturned = null;
 		}
 
 		@Override
 		public void set (E e)
 		{
+			if(lastReturned == null)
+			{
+				throw new IllegalStateException();
+			}
 			lastReturned.data = e;
+			lastReturned = null;
 		}
 	}
 }
