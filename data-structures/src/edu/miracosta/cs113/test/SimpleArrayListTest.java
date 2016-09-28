@@ -139,6 +139,16 @@ public class SimpleArrayListTest
 		assertThat (emptyList.remove (null), is (true));
 
 	}
+	
+	@Test
+	public void testRemoveRange ()
+	{
+		intList.subList (0,2).clear();
+		stringList.subList (0, stringList.size ()).clear ();
+		assertThat (intList.size (), is (8));
+		assertThat (stringList.size (), is (0));
+		assertThat (intList.get (0), is (2));
+	}
 
 	@Test
 	public void testRemoveAll ()

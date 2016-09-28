@@ -1,17 +1,27 @@
 
 package edu.miracosta.cs113.dataStructures;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.RandomAccess;
 
-public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>, List<E>, Iterable<E>
+public class SimpleArrayList<E> extends AbstractList<E>
+		implements
+			Collection<E>,
+			List<E>,
+			Iterable<E>,
+			RandomAccess,
+			Serializable
 {
-	private static double	GROWTH_MULTIPLIER	= 3.0 / 2.0;
+	private static final long	serialVersionUID	= 3707361473005116102L;
 
-	private E[]				data;
-	private int				size;
+	private static double		GROWTH_MULTIPLIER	= 3.0 / 2.0;
+
+	private E[]					data;
+	private int					size;
 
 	static
 	{
@@ -23,6 +33,12 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 		this (10);
 	}
 
+	public SimpleArrayList (Collection<? extends E> c)
+	{
+		this (c.size ());
+		addAll (c);
+	}
+
 	@SuppressWarnings("unchecked")
 	public SimpleArrayList (int initialCapacity)
 	{
@@ -31,7 +47,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	}
 
 	/**
-	 * Call before size changes
+	 * Call before size changes.
 	 * 
 	 * @return whether reallocation took place
 	 */
@@ -49,7 +65,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	/**
 	 * Grows the data array by {@link #GROWTH_MULTIPLIER} and copies the data
 	 * over to the new array using
-	 * {@link #copyLeft(Object[], int, Object[], int, int)}
+	 * {@link System#arraycopy(Object, int, Object, int, int)}.
 	 * 
 	 * @see #reallocate(int)
 	 */
@@ -60,7 +76,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 
 	/**
 	 * Grows the data array to newSize and copies the data over to the new array
-	 * using {@link #copyLeft(Object[], int, Object[], int, int)}
+	 * using {@link System#arraycopy(Object, int, Object, int, int)}
 	 * 
 	 * <p>
 	 * If newSize is less than size then the extra elements are truncated
@@ -75,96 +91,14 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 		E[] temp = data;
 		data = (E[]) new Object[newSize];
 
-		copyLeft (data, 0, temp, 0, Math.min (newSize, size));
+		System.arraycopy (temp, 0, data, 0, Math.min (newSize, size));
 		// TODO note optimizations like leaving a gap for space to add and thus
 		// not re copying that stuff again
 		// maybe for later
 	}
 
 	/**
-	 * Transfers from start to end of one array to another like memncpy in c
-	 * from the left ie. from the end to the start.
-	 * 
-	 * <p>
-	 * Requires that the destination and source have the space to take and set
-	 * to.
-	 * </p>
-	 * <p>
-	 * Can copy to and from the same array if start1 >= start2
-	 * </p>
-	 * <p>
-	 * The pre-reqs formally:
-	 * {@code assert dest.length >= numElements - start1 && source.length >= numElements - start2;}
-	 * and {@code if (dest == source) assert start1 >= start2;}
-	 * </p>
-	 * 
-	 * @param dest
-	 *            destination array (must have sufficient space)
-	 * @param start1
-	 *            where to start copying to
-	 * @param source
-	 *            source array
-	 * @param start2
-	 *            where to start copying from
-	 * @param numElements
-	 *            the number of elements to copy
-	 * 
-	 * @return the destination array
-	 * @see #copyRight(Object[], int, Object[], int, int)
-	 */
-	private <T> T[] copyLeft (T[] dest, int start1, T[] source, int start2, int numElements)
-	{
-		assert (dest.length >= numElements - start1
-				&& source.length >= numElements - start2) : "exceeded start and or dest array";
-		if (dest == source) assert start1 >= start2 : "use copyRight version";
-
-		for (int i = numElements - 1; i >= 0; --i)
-		{
-			dest[start1 + i] = source[start2 + i];
-		}
-		return dest;
-	}
-
-	/**
-	 * Transfers from start to end of one array to another like memncpy in c
-	 * from the right ie. from the start to the end.
-	 * 
-	 * <p>
-	 * Requires that the destination has enough space like memncpy.
-	 * </p>
-	 * <p>
-	 * Can copy to and from the same array if start1 <= start2
-	 * </p>
-	 * 
-	 * @param dest
-	 *            destination array (must have sufficient space)
-	 * @param start1
-	 *            where to start copying to
-	 * @param source
-	 *            source array
-	 * @param start2
-	 *            where to start copying from
-	 * @param numElements
-	 *            the number of elements to copy
-	 * 
-	 * @return the destination array
-	 * @see #copyLeft(Object[], int, Object[], int, int)
-	 */
-	private <T> T[] copyRight (T[] dest, int start1, T[] source, int start2, int numElements)
-	{
-		assert (dest.length >= numElements - start1
-				&& source.length >= numElements - start2) : "exceeded start and or dest array";
-		if (dest == source) assert start1 <= start2 : "use copyLeft version";
-
-		for (int i = 0; i < numElements; ++i)
-		{
-			dest[start1 + i] = source[start2 + i];
-		}
-		return dest;
-	}
-
-	/**
-	 * Throws on out of bounds, otherwise returns nothing
+	 * Throws on out of bounds, otherwise returns nothing.
 	 * 
 	 * @param index
 	 *            index to check
@@ -172,7 +106,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	 */
 	private void boundsCheck (int index)
 	{
-		if (index < 0 || index >= size)
+		if (index >= size || index < 0)
 		{
 			throw new IndexOutOfBoundsException (index + "is not in bounds of [0, " + size + "]");
 		}
@@ -190,7 +124,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 
 		if (index != size)
 		{
-			copyLeft (data, index + 1, data, index, size - index);
+			System.arraycopy (data, index, data, index + 1, size - index);
 		}
 		data[index] = e;
 
@@ -206,7 +140,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 		if (index != size)
 		{
 			boundsCheck (index);
-			copyLeft (data, index + c.size (), data, index, size - index);
+			System.arraycopy (data, index, data, index + c.size (), size - index);
 		}
 
 		Iterator<? extends E> iterator = c.iterator ();
@@ -221,7 +155,7 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 
 	@Override
 	public E get (int index)
-	{	
+	{
 		return data[index];
 	}
 
@@ -247,7 +181,10 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	public E remove (int index)
 	{
 		E temp = data[index];
-		copyRight (data, index, data, index + 1, size - index - 1);
+		System.arraycopy (data, index + 1, data, index, size - index - 1);
+		// saw in java's implementation (to set to null)
+		// allows the gc to collect garbage
+		data[size - 1] = null;
 		--size;
 		++modCount;
 		return temp;
@@ -312,6 +249,32 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	}
 
 	@Override
+	protected void removeRange (int fromIndex, int toIndex)
+	{
+		if (toIndex - fromIndex == size)
+		{
+			reallocate (0);
+			size = 0;
+		}
+		else if (toIndex == size)
+		{
+			for(int i = fromIndex; i <= toIndex; ++i)
+			{
+				data[i] = null;
+			}
+		}
+		else {
+			System.arraycopy (data, toIndex, data, fromIndex, size - toIndex);
+			for(int i = toIndex; i < size; ++i)
+			{
+				data[i] = null;
+			}
+			size -= (toIndex - fromIndex);
+			
+		}
+	}
+
+	@Override
 	public boolean removeAll (Collection<?> c)
 	{
 		// TODO fun optimization maybe?
@@ -370,14 +333,16 @@ public class SimpleArrayList<E> extends AbstractList<E> implements Collection<E>
 	{
 		if (a.length >= size)
 		{
-			copyLeft (a, 0, (T[]) data, 0, size);
+			System.arraycopy (data, 0, a, 0, size);
 			if (a.length > size)
 			{
 				a[a.length - 1] = null;
 			}
 			return a;
 		}
-		return (T[]) copyLeft (new Object[size], 0, data, 0, size);
+		T[] returnArray = (T[]) new Object[size];
+		System.arraycopy (data, 0, returnArray, 0, size);
+		return returnArray;
 	}
 
 	public void ensureCapcity (int minCapacity)
