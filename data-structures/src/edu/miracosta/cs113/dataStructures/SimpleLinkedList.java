@@ -22,9 +22,18 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		head.next = tail;
 		tail.prev = head;
 	}
+	
+	public SimpleLinkedList ()
+	{
+	}
+	
+	public SimpleLinkedList(Collection<? extends E> c)
+	{
+		addAll (c);
+	}
 
 	/**
-	 * @param index
+	 * @param index the index of the node
 	 * @return the node at the index or the tail if size is 0
 	 */
 	private Node<E> node (int index)
@@ -110,7 +119,7 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 
 	/**
 	 * Is the power house of the list. Used by {@link AbstractSequentialList} to
-	 * back all SimpleLinkedList list methods
+	 * back all SimpleLinkedList list methods.
 	 * 
 	 * <p>
 	 * This Class only (well mostly in jest (but still >:| )) exists and is not
@@ -136,7 +145,7 @@ public class SimpleLinkedList<E> extends AbstractSequentialList<E> implements Co
 		@Override
 		public void add (E e)
 		{
-			addAfter (next.prev, e); // modCount is already incremented
+			addAfter (next.prev, e);
 		}
 
 		@Override
