@@ -42,7 +42,7 @@ public class ListStack<E> implements Iterable<E>
 		int index = data.indexOf (o);
 		return (index != -1) ? index + 1 : index;
 	}
-	
+
 	@Override
 	public boolean equals (Object obj)
 	{
@@ -54,17 +54,20 @@ public class ListStack<E> implements Iterable<E>
 		{
 			return false;
 		}
-		if(obj instanceof Collection)
+		if (obj instanceof Collection)
 		{
 			@SuppressWarnings("rawtypes") Collection other = (Collection) obj;
-			if(data.size () != other.size ())
+			if (data.size () != other.size ())
 			{
 				return false;
 			}
-			@SuppressWarnings("rawtypes") Iterator cItr = other.iterator();
-			for(int i = data.size() - 1; i >= 0; --i)
+
+			// Use our own iterator through the for since iterating over a
+			// linked list with an iterator is better (no re traversals)
+			@SuppressWarnings("rawtypes") Iterator cItr = other.iterator ();
+			for (E ourElement : data)
 			{
-				if(!data.get (i).equals (cItr.next()))
+				if (!ourElement.equals (cItr.next ()))
 				{
 					return false;
 				}
@@ -88,23 +91,24 @@ public class ListStack<E> implements Iterable<E>
 		}
 		return true;
 	}
-	
-	public String toString()
+
+	public String toString ()
 	{
 		return data.stream ()
 				.map (Object::toString)
 				.collect (Collectors.joining (",", "[", "]"));
 	}
-	
+
 	@Override
 	public Iterator<E> iterator ()
 	{
-		return new StackItr();
+		return new StackItr ();
 	}
-	
+
 	private class StackItr implements Iterator<E>
 	{
 		ListIterator<E> dataItr = data.listIterator (data.size ());
+
 		@Override
 		public boolean hasNext ()
 		{
@@ -117,5 +121,5 @@ public class ListStack<E> implements Iterable<E>
 			return dataItr.previous ();
 		}
 	}
-	
+
 }
