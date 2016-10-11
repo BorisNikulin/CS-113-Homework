@@ -3,6 +3,7 @@ package edu.miracosta.cs113.dataStructures;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 public class ListStack<E> implements Iterable<E>
@@ -103,17 +104,17 @@ public class ListStack<E> implements Iterable<E>
 	
 	private class StackItr implements Iterator<E>
 	{
-		Iterator<E> dataItr = data.iterator ();
+		ListIterator<E> dataItr = data.listIterator (data.size ());
 		@Override
 		public boolean hasNext ()
 		{
-			return dataItr.hasNext ();
+			return dataItr.hasPrevious ();
 		}
 
 		@Override
 		public E next ()
 		{
-			return dataItr.next ();
+			return dataItr.previous ();
 		}
 	}
 	
