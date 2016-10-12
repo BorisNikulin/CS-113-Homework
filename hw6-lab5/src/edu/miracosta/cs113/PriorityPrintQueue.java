@@ -110,7 +110,7 @@ public class PriorityPrintQueue extends AbstractQueue<PrintJob> implements Block
 	public int size ()
 	{
 		// TODO Auto-generated method stub
-		return 0;
+		return lessThan10Pages.size() + lessThan20Pages.size() + moreThan20Pages.size();
 	}
 
 	@Override
