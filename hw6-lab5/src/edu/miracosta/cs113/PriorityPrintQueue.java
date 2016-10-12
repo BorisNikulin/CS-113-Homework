@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Represents a thread safe priority queue for print jobs. Priority is
@@ -20,16 +21,68 @@ import java.util.concurrent.TimeUnit;
 public class PriorityPrintQueue extends AbstractQueue<PrintJob> implements BlockingQueue<PrintJob>
 {
 	// TODO make my own queue (my own heap + priority queue eventually)
-	Queue<PrintJob>	lessThan10Pages	= new LinkedList<> ();
-	Queue<PrintJob>	lessThan20Pages	= new LinkedList<> ();
-	Queue<PrintJob>	moreThan20Pages	= new LinkedList<> ();
+	private Queue<PrintJob>	lessThan10Pages	= new LinkedList<> ();
+	private Queue<PrintJob>	lessThan20Pages	= new LinkedList<> ();
+	private Queue<PrintJob>	moreThan20Pages	= new LinkedList<> ();
+
+	private ReentrantLock	lessThan10lock	= new ReentrantLock ();
+	private ReentrantLock	lessThan20lock	= new ReentrantLock ();
+	private ReentrantLock	moreThan20lock	= new ReentrantLock ();
 
 	@Override
 	public boolean offer (PrintJob e)
 	{
 		Objects.requireNonNull (e, "Elements can not be null");
+		
+		boolean didAdd = false;
+		if (e.getPageCount () < 10)
+		{
+			if (lessThan10lock.tryLock ())
+			{
+				try
+				{
+					lessThan10Pages.add (e);
+					didAdd = true;
+				}
+				finally
+				{
+					lessThan10lock.unlock ();
+				}
+			}
 
-		return true;
+		}
+		else if (e.getPageCount () < 20)
+		{
+			if (lessThan20lock.tryLock ())
+			{
+				try
+				{
+					lessThan20Pages.add (e);
+					didAdd = true;
+				}
+				finally
+				{
+					lessThan20lock.unlock ();
+				}
+			}
+		}
+		else
+		{
+			if (moreThan20lock.tryLock ())
+			{
+				try
+				{
+					moreThan20Pages.add (e);
+					didAdd = true;
+				}
+				finally
+				{
+					moreThan20lock.unlock ();
+				}
+			}
+		}
+
+		return didAdd;
 	}
 
 	@Override
