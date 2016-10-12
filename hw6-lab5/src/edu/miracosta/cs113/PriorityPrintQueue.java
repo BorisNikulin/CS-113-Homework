@@ -144,15 +144,51 @@ public class PriorityPrintQueue extends AbstractQueue<PrintJob> implements Block
 	@Override
 	public void put (PrintJob e) throws InterruptedException
 	{
-		// TODO Auto-generated method stub
+		Objects.requireNonNull (e, "Elements can not be null");
+		
+		if (e.getPageCount () < 10)
+		{
+			lessThan10lock.lock ();
+			try
+			{
+				lessThan10Pages.add (e);
+			}
+			finally
+			{
+				lessThan10lock.unlock ();
+			}
 
+		}
+		else if (e.getPageCount () < 20)
+		{
+			lessThan20lock.lock ();
+			try
+			{
+				lessThan20Pages.add (e);
+			}
+			finally
+			{
+				lessThan20lock.unlock ();
+			}
+		}
+		else
+		{
+			moreThan20lock.lock ();
+			try
+			{
+				moreThan20Pages.add (e);
+			}
+			finally
+			{
+				moreThan20lock.unlock ();
+			}
+		}
 	}
 
 	@Override
 	public int remainingCapacity ()
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		return Integer.MAX_VALUE;
 	}
 
 	@Override
