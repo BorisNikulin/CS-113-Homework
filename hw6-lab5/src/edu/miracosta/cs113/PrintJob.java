@@ -34,5 +34,10 @@ public class PrintJob
 	{
 		return pageCount;
 	}
+	
+	public String toString ()
+	{
+		return "Id: " + id + ", Page Count: " + pageCount;
+	}
 
 }
