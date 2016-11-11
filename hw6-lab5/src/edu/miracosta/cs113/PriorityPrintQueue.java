@@ -76,7 +76,7 @@ public class PriorityPrintQueue extends AbstractQueue<PrintJob>
 	@Override
 	public boolean offer (PrintJob e)
 	{
-		Objects.requireNonNull (e, "Elements can not be null");
+		Objects.requireNonNull (e, "PrintJobs can not be null");
 		return getQueue (e.getPageCount ()).offer (e);
 
 	}
