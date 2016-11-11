@@ -28,6 +28,8 @@ public class PriorityPrintQueue extends AbstractQueue<PrintJob> implements Block
 	private ReentrantLock	lessThan10lock	= new ReentrantLock ();
 	private ReentrantLock	lessThan20lock	= new ReentrantLock ();
 	private ReentrantLock	moreThan20lock	= new ReentrantLock ();
+	
+	private ReentrantLock writeLock = new ReentrantLock ();
 
 	@Override
 	public boolean offer (PrintJob e)
@@ -194,8 +196,40 @@ public class PriorityPrintQueue extends AbstractQueue<PrintJob> implements Block
 	@Override
 	public PrintJob take () throws InterruptedException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		PrintJob takenPrintJob;
+		
+		lessThan10lock.lock ();
+		try
+		{
+			lessThan20lock.lock ();
+			try
+			{
+				moreThan20lock.lock ();
+				try
+				{
+					synchronized (this)
+					{
+						while(size() == 0)
+						{
+							this.wait ();
+						}
+						
+					}
+				}
+				finally
+				{
+					moreThan20lock.unlock ();
+				}
+			}
+			finally
+			{
+				lessThan20lock.unlock ();
+			}
+		}
+		finally
+		{
+			lessThan10lock.unlock ();
+		}
 	}
 
 }
