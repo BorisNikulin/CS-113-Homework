@@ -37,7 +37,7 @@ public class PrintJob
 	
 	public String toString ()
 	{
-		return "Id: " + id + ", Page Count: " + pageCount;
+		return "Id: " + String.format ("%+20d", id) + "; Page Count: " + pageCount;
 	}
 
 }
