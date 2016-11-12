@@ -3,36 +3,43 @@ package edu.miracosta.cs113;
 
 import java.util.List;
 import java.util.Random;
-import java.util.function.IntSupplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main
 {
 
+	public static final int SEED = 46525;
+
 	public static void main (String[] args)
 	{
-		Random rand = new Random (24745658);
-		// [1, 50] random page nums
-		IntSupplier pageCountSupplier = () -> rand.nextInt (50) + 1;
-		
-		PriorityPrintQueue ppq = generatePriorityPrintQueue (pageCountSupplier, 100);
-		List<PrintJob> printJobInsertionOrder = Stream
-				.generate ( () -> new PrintJob (pageCountSupplier.getAsInt ()))
-				.limit (100)
-				.collect (Collectors.toList ());
+		PriorityPrintQueue ppq = generatePrintJobs (PriorityPrintQueue.collector (), SEED, 100);
+		List<PrintJob> printJobInsertionOrder = generatePrintJobs (Collectors.toList (), SEED, 100);
 
 		System.out.println (ppq.toString ().replaceAll (",", ",\n"));
+		System.out.println ("\n----------------------\n");
+		System.out.println (printJobInsertionOrder.toString ().replaceAll (",", ",\n"));
 	}
 
-	public static PriorityPrintQueue generatePriorityPrintQueue (IntSupplier randomPageLengths, long numPrintJobs)
+	@SuppressWarnings("unchecked")
+	public static <A, R> R generatePrintJobs (Collector<PrintJob, A, R> accumulator, int seed,
+			long numPrintJobs)
 	{
-		PriorityPrintQueue ppq = new PriorityPrintQueue ();
+		Random rand = new Random (seed);
+
+		A container = accumulator.supplier ().get ();
 		for (long i = 0; i < numPrintJobs; ++i)
 		{
-			ppq.add (new PrintJob (randomPageLengths.getAsInt ()));
+			accumulator.accumulator ().accept (container, new PrintJob (rand.nextLong (), rand.nextInt (50) + 1));
 		}
-		return ppq;
+		if (accumulator.characteristics ().contains (Collector.Characteristics.IDENTITY_FINISH))
+		{
+			return (R) container;
+		}
+		else
+		{
+			return accumulator.finisher ().apply (container);
+		}
 	}
 
 }
