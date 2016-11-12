@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.stream.Collector;
 
 /**
  * Represents a thread safe priority queue for print jobs. Priority is
@@ -142,6 +143,19 @@ public class PriorityPrintQueue extends AbstractQueue<PrintJob>
 			}
 		}
 
+	}
+
+	public static Collector<PrintJob, PriorityPrintQueue, PriorityPrintQueue> collector ()
+	{
+		return Collector.of (PriorityPrintQueue::new,
+				PriorityPrintQueue::offer,
+				(queue1, queue2) ->
+				{
+					queue1.addAll (queue2);
+					return queue1;
+					// that boolean return messing this up -_-
+				},
+				Collector.Characteristics.IDENTITY_FINISH);
 	}
 
 }
