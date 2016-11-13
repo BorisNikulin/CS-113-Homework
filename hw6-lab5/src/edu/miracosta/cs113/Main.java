@@ -15,11 +15,11 @@ public class Main
 {
 
 	public static final int	SEED				= 46525;
-	public static final int	PRINT_JOB_LENGTH	= 4;
+	public static final int	PRINT_JOB_LENGTH	= 100;
 
 	public static void main (String[] args)
 	{
-		Duration printDuration = Duration.ZERO;
+		List<Duration> printDurations = Arrays.asList (Duration.ZERO, Duration.ZERO, Duration.ZERO);
 
 		// synthetic way to receive print jobs
 		// to get insertion order a wrapper on the queue
@@ -35,18 +35,36 @@ public class Main
 
 		// synthetic add since print jobs were added synthetically
 		// 1 minute wait between each print job request
-		printDuration = printDuration.plusMinutes (PRINT_JOB_LENGTH);
-		
+		printDurations.forEach (dur -> dur.plusMinutes (PRINT_JOB_LENGTH));
+
 		System.out.println (ppq.toString ().replaceAll (",", ",\n"));
 		System.out.println ("\n----------------------\n");
 		System.out.println (printJobInsertionOrder.toString ().replaceAll (",", ",\n"));
-		
-		printDuration = printDuration.plus (printDuration(ppq, printers.subList (0, 3)));
-		
+
+		for (int i = 0; i < 3; ++i)
+		{
+			printDurations.set (i, printDurations.get (i).plus (printDuration (ppq, printers.subList (0, i + 1))));
+		}
+
 		System.out.println ("\n");
-		System.out.println (printDuration);
+		for (int i = 0; i < 3; ++i)
+		{
+			System.out.println (String.format ("Print duration for %d printers is %s", i + 1, printDurations.get (i)));
+		}
 	}
 
+	/**
+	 * Generates print jobs using a random object which uses the given seed. Then uses a
+	 * collector to collect the print jobs into a mutable container.
+	 * 
+	 * @param <A> - the container type where print jobs are aggregated into
+	 * @param <R> - the final result type produced from a single, final transformation on the container
+	 * 
+	 * @param collector - the collector for accumulating into a mutable container
+	 * @param seed - the seed for the random object
+	 * @param numPrintJobs - the number of print jobs to generate
+	 * @return A finished mutable container \<R\> produced from accumulating print jobs into a mutable container\<A\>
+	 */
 	@SuppressWarnings("unchecked")
 	public static <A, R> R generatePrintJobs (Collector<PrintJob, A, R> collector, int seed,
 			long numPrintJobs)
@@ -97,10 +115,10 @@ public class Main
 				this.printer = printer;
 				this.totalPrintDuration = totalPrintDuration;
 			}
-			
-			public String toString()
+
+			public String toString ()
 			{
-				return printer.toString () + "; " + totalPrintDuration.toString (); 
+				return printer.toString () + "; " + totalPrintDuration.toString ();
 			}
 		}
 
