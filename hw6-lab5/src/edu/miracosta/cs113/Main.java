@@ -1,17 +1,13 @@
 
 package edu.miracosta.cs113;
 
-import java.sql.Wrapper;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.function.LongSupplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -19,7 +15,7 @@ public class Main
 {
 
 	public static final int	SEED				= 46525;
-	public static final int	PRINT_JOB_LENGTH	= 100;
+	public static final int	PRINT_JOB_LENGTH	= 4;
 
 	public static void main (String[] args)
 	{
@@ -40,10 +36,15 @@ public class Main
 		// synthetic add since print jobs were added synthetically
 		// 1 minute wait between each print job request
 		printDuration = printDuration.plusMinutes (PRINT_JOB_LENGTH);
-
+		
 		System.out.println (ppq.toString ().replaceAll (",", ",\n"));
 		System.out.println ("\n----------------------\n");
 		System.out.println (printJobInsertionOrder.toString ().replaceAll (",", ",\n"));
+		
+		printDuration = printDuration.plus (printDuration(ppq, printers.subList (0, 3)));
+		
+		System.out.println ("\n");
+		System.out.println (printDuration);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -96,6 +97,11 @@ public class Main
 				this.printer = printer;
 				this.totalPrintDuration = totalPrintDuration;
 			}
+			
+			public String toString()
+			{
+				return printer.toString () + "; " + totalPrintDuration.toString (); 
+			}
 		}
 
 		if (!printers.iterator ().hasNext () || numberOfPrinters <= 0)
@@ -122,7 +128,7 @@ public class Main
 
 		return printDurations.stream ()
 				.map (wrapper -> wrapper.totalPrintDuration)
-				.reduce (Duration::plus)
+				.max (Comparator.naturalOrder ())
 				.orElse (Duration.ZERO);
 	}
 
