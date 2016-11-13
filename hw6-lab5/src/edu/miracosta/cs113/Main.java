@@ -22,23 +22,23 @@ public class Main
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <A, R> R generatePrintJobs (Collector<PrintJob, A, R> accumulator, int seed,
+	public static <A, R> R generatePrintJobs (Collector<PrintJob, A, R> collector, int seed,
 			long numPrintJobs)
 	{
 		Random rand = new Random (seed);
 
-		A container = accumulator.supplier ().get ();
+		A container = collector.supplier ().get ();
 		for (long i = 0; i < numPrintJobs; ++i)
 		{
-			accumulator.accumulator ().accept (container, new PrintJob (rand.nextLong (), rand.nextInt (50) + 1));
+			collector.accumulator ().accept (container, new PrintJob (rand.nextLong (), rand.nextInt (50) + 1));
 		}
-		if (accumulator.characteristics ().contains (Collector.Characteristics.IDENTITY_FINISH))
+		if (collector.characteristics ().contains (Collector.Characteristics.IDENTITY_FINISH))
 		{
 			return (R) container;
 		}
 		else
 		{
-			return accumulator.finisher ().apply (container);
+			return collector.finisher ().apply (container);
 		}
 	}
 
