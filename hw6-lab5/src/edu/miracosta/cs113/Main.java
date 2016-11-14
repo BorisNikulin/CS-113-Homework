@@ -24,9 +24,6 @@ public class Main
 		// synthetic way to receive print jobs
 		// to get insertion order a wrapper on the queue
 		// or an extra layer of code when a print job is received can be done
-		// id like to try using ReactFX or RxJava for that react paradigm
-		// stream/subscriber thing ...
-		// but ill just do generic uninspired code
 		PriorityPrintQueue ppq = generatePrintJobs (PriorityPrintQueue.collector (), SEED, PRINT_JOB_LENGTH);
 		List<PrintJob> printJobInsertionOrder = generatePrintJobs (Collectors.toList (), SEED, PRINT_JOB_LENGTH);
 		// 10 pages per minute
