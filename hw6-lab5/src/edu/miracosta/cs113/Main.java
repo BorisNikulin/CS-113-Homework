@@ -119,7 +119,7 @@ public class Main
 			}
 		}
 
-		if (!printers.iterator ().hasNext () || numberOfPrinters <= 0)
+		if (!printers.iterator ().hasNext () && numberOfPrinters <= 0)
 		{
 			return null;
 		}
