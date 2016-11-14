@@ -51,16 +51,23 @@ public class Main
 	}
 
 	/**
-	 * Generates print jobs using a random object which uses the given seed. Then uses a
-	 * collector to collect the print jobs into a mutable container.
+	 * Generates print jobs using a random object which uses the given seed.
+	 * Then uses a collector to collect the print jobs into a mutable container.
 	 * 
-	 * @param <A> - the container type where print jobs are aggregated into
-	 * @param <R> - the final result type produced from a single, final transformation on the container
+	 * @param <A>
+	 *            - the container type where print jobs are aggregated into
+	 * @param <R>
+	 *            - the final result type produced from a single, final
+	 *            transformation on the container
 	 * 
-	 * @param collector - the collector for accumulating into a mutable container
-	 * @param seed - the seed for the random object
-	 * @param numPrintJobs - the number of print jobs to generate
-	 * @return A finished mutable container \<R\> produced from accumulating print jobs into a mutable container\<A\>
+	 * @param collector
+	 *            - the collector for accumulating into a mutable container
+	 * @param seed
+	 *            - the seed for the random object
+	 * @param numPrintJobs
+	 *            - the number of print jobs to generate
+	 * @return A finished mutable container \<R\> produced from accumulating
+	 *         print jobs into a mutable container\<A\>
 	 */
 	@SuppressWarnings("unchecked")
 	public static <A, R> R generatePrintJobs (Collector<PrintJob, A, R> collector, int seed,
@@ -141,6 +148,9 @@ public class Main
 			printDurations.offer (firstAvailblePrinter);
 		}
 
+		// TODO keep track of max and return that
+		// it will go from O(n^2 + m) to O(n + m)
+		// not even counting the offer to the PriorityQueue
 		return printDurations.stream ()
 				.map (wrapper -> wrapper.totalPrintDuration)
 				.max (Comparator.naturalOrder ())
