@@ -1,7 +1,7 @@
 
 package edu.miracosta.cs113.test;
 
-import java.util.Arrays;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
@@ -13,8 +13,14 @@ public class ChangeTest
 	@Test
 	public void testPrintChangeCombinations ()
 	{
-		System.out.println (Arrays.toString (Change.COIN.values()));
-		Change.printChangeCombinations (10);
+		Change.printChangeCombinations (7);
+		Change.printChangeCombinations (11);
+		Change.printChangeCombinations (15);
+		Change.printChangeCombinations (18);
+		// i could redirect output to my own output stream and check that
+		// stream for the proper sequence of bytes...
+		// or i could just not
+		fail ("Check visual results");
 	}
 
 }
