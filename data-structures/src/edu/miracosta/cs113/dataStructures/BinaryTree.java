@@ -127,28 +127,39 @@ public class BinaryTree<E>
 		consumer.accept (root.data, depth);
 	}
 
+	public <A, R> R collect (Collector<E, A, R> collector)
+	{
+		return collect (collector, TRAVERSE.PRE_ORDER);
+	}
+
+	public <A, R> R collectWithDepth (Collector<ElementDepthPair<E>, A, R> collector)
+	{
+		return collectWithDepth (collector, TRAVERSE.PRE_ORDER);
+	}
+
 	public <A, R> R collect (Collector<E, A, R> collector, TRAVERSE traverseOrder)
 	{
-		 Collector<ElementDepthPair<E>, A, R> modifiedCollector = Collector.of (
-						collector.supplier (),
-						(container, elementDepthTuple) -> collector.accumulator ()
-								.accept (container, elementDepthTuple.getElement ()),
-						collector.combiner (),
-						collector.finisher (),
-						// may type erasure genetics feel the pain i've felt for these couple hours
-						collector.characteristics ().toArray (
-								new Collector.Characteristics[collector.characteristics ().size()]));
+		Collector<ElementDepthPair<E>, A, R> modifiedCollector = Collector.of (
+				collector.supplier (),
+				(container, elementDepthTuple) -> collector.accumulator ()
+						.accept (container, elementDepthTuple.getElement ()),
+				collector.combiner (),
+				collector.finisher (),
+				// may type erasure genetics feel the pain i've felt for these
+				// couple hours
+				collector.characteristics ().toArray (
+						new Collector.Characteristics[collector.characteristics ().size ()]));
 
-		 return collectWithDepth (modifiedCollector, traverseOrder);
+		return collectWithDepth (modifiedCollector, traverseOrder);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <A, R> R collectWithDepth (Collector<ElementDepthPair<E>, A, R> collector, TRAVERSE traverseOrder)
 	{
 		A container = collector.supplier ().get ();
-		
-		forEachWithDepth ((element, depth) -> collector.accumulator ()
-				.accept (container, new ElementDepthPair<E> (element, depth))); 
+
+		forEachWithDepth ( (element, depth) -> collector.accumulator ()
+				.accept (container, new ElementDepthPair<E> (element, depth)));
 
 		if (collector.characteristics ().contains (Collector.Characteristics.IDENTITY_FINISH))
 		{
@@ -162,7 +173,7 @@ public class BinaryTree<E>
 
 	public enum TRAVERSE
 	{
-		PRE_ORDER, IN_ORDER, POST_ORDER, // TODO depth or breadth first;
+		PRE_ORDER, IN_ORDER, POST_ORDER, // TODO depth and breadth first;
 	}
 
 	private static class Node<E>
