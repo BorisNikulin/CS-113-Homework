@@ -1,12 +1,11 @@
 
 package edu.miracosta.cs113.dataStructures;
 
+import java.util.Scanner;
 import java.util.StringJoiner;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /**
  * @author Boris
@@ -312,6 +311,24 @@ public class BinaryTree<E>
 				Collector.Characteristics.IDENTITY_FINISH)).toString();
 	}
 
+	/**
+	 * Reads a scanner, next by next, and constructs a tree in pre-order
+	 * 
+	 * @param scn - the scanner to read from
+	 * @return a {@link BinaryTree} in pre-order
+	 */
+	public static BinaryTree<String> readBinaryTree(Scanner scn)
+	{
+		String data = scn.next();
+		if(data.equals("null"))
+		{
+			return null;
+		}
+		BinaryTree<String> left = readBinaryTree(scn);
+		BinaryTree<String> right = readBinaryTree(scn);
+		return new BinaryTree<String>(data, left, right);
+	}
+	
 	public enum TRAVERSE
 	{
 		PRE_ORDER, IN_ORDER, POST_ORDER, // TODO depth and breadth first;
