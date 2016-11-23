@@ -130,7 +130,7 @@ public class BinaryTreeTest
 								null,
 								new BinaryTree<>(32, null, null)));
 		//@formatter:on
-		
+
 		assertThat(intTree.equals(otherIntTree), is(true));
 	}
 
@@ -142,10 +142,29 @@ public class BinaryTreeTest
 	}
 
 	@Test
+	public void mapTest()
+	{
+		//@formatter:off
+		BinaryTree<String> stringTree = new BinaryTree<>("11",
+						new BinaryTree<>("21",
+								new BinaryTree<>("31", null, null),
+								null),
+						new BinaryTree<>("22",
+								null,
+								new BinaryTree<>("32", null, null)));
+		//@formatter:on
+
+		BinaryTree<Integer> otherIntTree = stringTree.map(Integer::parseInt);
+		assertThat(intTree.equals(otherIntTree), is(true));
+	}
+
+	@Test
 	public void testReadBinaryTree()
 	{
-		Scanner scn = new Scanner("11 21 31 null 22 null 32");
-		read
+		Scanner scn = new Scanner("11 21 31 null null null 22 null 32 null null");
+		BinaryTree<Integer> otherIntTree = BinaryTree.readBinaryTree(scn).map(Integer::parseInt);
+		assertThat(intTree.equals(otherIntTree), is(true));
+
 	}
 
 }

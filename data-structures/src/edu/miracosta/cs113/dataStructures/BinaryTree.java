@@ -379,7 +379,10 @@ public class BinaryTree<E>
 	}
 
 	/**
-	 * Reads a scanner, next by next, and constructs a tree in pre-order
+	 * Reads a scanner, next by next, and constructs a tree in pre-order with
+	 * the string "null" signifying null. If nulls are not properly inserted
+	 * (not enough nulls to end the tree leafs), the Scanner will throw no such
+	 * element exception
 	 * 
 	 * @param scn
 	 *            - the scanner to read from
