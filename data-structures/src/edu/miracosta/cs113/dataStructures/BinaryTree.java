@@ -1,10 +1,12 @@
 
 package edu.miracosta.cs113.dataStructures;
 
+import java.util.StringJoiner;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @author Boris
@@ -300,6 +302,14 @@ public class BinaryTree<E>
 			traversePreOrder(consumer, root.right, depth + 1);
 		}
 		consumer.accept(root.data, depth);
+	}
+
+	public String toString ()
+	{
+		return collect(Collector.of( () -> new StringJoiner(", ", "[", "]"),
+				(strJnr, element) -> strJnr.add(element.toString()),
+				StringJoiner::merge,
+				Collector.Characteristics.IDENTITY_FINISH)).toString();
 	}
 
 	public enum TRAVERSE
