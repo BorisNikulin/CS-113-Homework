@@ -10,6 +10,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
+ * A Binary Tree implementation.
+ * 
  * @author Boris
  *
  */
@@ -400,6 +402,20 @@ public class BinaryTree<E>
 		return new BinaryTree<String>(data, left, right);
 	}
 
+	/**
+	 * Eagerly maps this tree using the mapper function. The resultant tree is a
+	 * shallow copy with the map applied (unless the mapper function performs a
+	 * deep copy).
+	 * 
+	 * <p>
+	 * Works great with {@link #readBinaryTree(Scanner)} for reading in a
+	 * {@code BinaryTree<String>} and mapping to a potentially more useful type.
+	 * </p>
+	 * 
+	 * @param mapper
+	 *            - the function mapping from E to R
+	 * @return a new map with each element having the mapper function applied
+	 */
 	public <R> BinaryTree<R> map(Function<E, R> mapper)
 	{
 		if (root != null)
@@ -430,18 +446,11 @@ public class BinaryTree<E>
 		PRE_ORDER, IN_ORDER, POST_ORDER, // TODO depth and breadth first;
 	}
 
-	private static class Node<E>
+	protected static class Node<E>
 	{
 		public E					data;
 		public Node<? extends E>	left;
 		public Node<? extends E>	right;
-
-		public Node (E data)
-		{
-			this.data = data;
-			this.left = null;
-			this.right = null;
-		}
 
 		public Node (E data, Node<? extends E> left, Node<? extends E> right)
 		{
