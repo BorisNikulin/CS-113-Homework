@@ -63,6 +63,12 @@ public class BinaryTree<E>
 		return root != null ? root.data : null;
 	}
 
+	/**
+	 * Returns whether the local root of this tree is a leaf.
+	 * If root is null then a null pointer exception is thrown.
+	 * 
+	 * @return true if and only if left and right subtrees are null
+	 */
 	public boolean isLeaf ()
 	{
 		return root.left == null && root.right == null;
@@ -269,7 +275,7 @@ public class BinaryTree<E>
 		consumer.accept(root.data, depth);
 		if (root.left != null)
 		{
-			traversePreOrder(consumer, root.right, depth + 1);
+			traversePreOrder(consumer, root.left, depth + 1);
 		}
 		if (root.right != null)
 		{
@@ -281,7 +287,7 @@ public class BinaryTree<E>
 	{
 		if (root.left != null)
 		{
-			traversePreOrder(consumer, root.right, depth + 1);
+			traversePreOrder(consumer, root.left, depth + 1);
 		}
 		consumer.accept(root.data, depth);
 		if (root.right != null)
@@ -294,7 +300,7 @@ public class BinaryTree<E>
 	{
 		if (root.left != null)
 		{
-			traversePreOrder(consumer, root.right, depth + 1);
+			traversePreOrder(consumer, root.left, depth + 1);
 		}
 		if (root.right != null)
 		{
@@ -352,6 +358,11 @@ public class BinaryTree<E>
 			this.data = data;
 			this.left = left;
 			this.right = right;
+		}
+		
+		public String toString()
+		{
+			return data != null ? data.toString() : "null";
 		}
 	}
 
