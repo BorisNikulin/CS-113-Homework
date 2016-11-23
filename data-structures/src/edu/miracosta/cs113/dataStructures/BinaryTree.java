@@ -1,11 +1,8 @@
 
 package edu.miracosta.cs113.dataStructures;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
-
-import javax.xml.crypto.Data;
 
 /**
  * @author Boris
@@ -54,6 +51,16 @@ public class BinaryTree<E>
 		return root.left == null && root.right == null;
 	}
 
+	public void forEach (Consumer<? super E> consumer)
+	{
+		forEach (consumer, TRAVERSE.PRE_ORDER);
+	}
+	
+	public void forEachWithDepth (ObjIntConsumer<? super E> consumer)
+	{
+		forEachWithDepth (consumer, TRAVERSE.PRE_ORDER);
+	}
+	
 	public void forEach (Consumer<? super E> consumer, TRAVERSE traverseOrder)
 	{
 		forEachWithDepth ((element , depth) -> consumer.accept(element), traverseOrder);
