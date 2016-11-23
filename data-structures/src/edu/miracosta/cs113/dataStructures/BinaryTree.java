@@ -1,8 +1,10 @@
 
 package edu.miracosta.cs113.dataStructures;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
+import java.util.stream.Collector;
 
 /**
  * @author Boris
@@ -55,17 +57,17 @@ public class BinaryTree<E>
 	{
 		forEach (consumer, TRAVERSE.PRE_ORDER);
 	}
-	
+
 	public void forEachWithDepth (ObjIntConsumer<? super E> consumer)
 	{
 		forEachWithDepth (consumer, TRAVERSE.PRE_ORDER);
 	}
-	
+
 	public void forEach (Consumer<? super E> consumer, TRAVERSE traverseOrder)
 	{
-		forEachWithDepth ((element , depth) -> consumer.accept(element), traverseOrder);
+		forEachWithDepth ( (element, depth) -> consumer.accept (element), traverseOrder);
 	}
-	
+
 	public void forEachWithDepth (ObjIntConsumer<? super E> consumer, TRAVERSE traverseOrder)
 	{
 		switch (traverseOrder)
@@ -80,48 +82,82 @@ public class BinaryTree<E>
 			traversePostOrder (consumer, root, 0);
 			break;
 		default:
-			throw new UnsupportedOperationException(traverseOrder.toString () + " is not supported yet");
-			//although if one added an enum then he/she would of added the other necessary additions...
+			throw new UnsupportedOperationException (traverseOrder.toString () + " is not supported yet");
+			// although if one added an enum then he/she would of added the
+			// other necessary additions...
 		}
 	}
-	
-	private void traversePreOrder(ObjIntConsumer<? super E> consumer, Node<? extends E> root, int depth)
+
+	private void traversePreOrder (ObjIntConsumer<? super E> consumer, Node<? extends E> root, int depth)
 	{
 		consumer.accept (root.data, depth);
-		if(root.left != null)
+		if (root.left != null)
 		{
-			traversePreOrder(consumer, root.right, depth + 1);
+			traversePreOrder (consumer, root.right, depth + 1);
 		}
-		if(root.right != null)
+		if (root.right != null)
 		{
-			traversePreOrder(consumer, root.right, depth + 1);
-		}	
+			traversePreOrder (consumer, root.right, depth + 1);
+		}
+	}
+
+	private void traverseInOrder (ObjIntConsumer<? super E> consumer, Node<? extends E> root, int depth)
+	{
+		if (root.left != null)
+		{
+			traversePreOrder (consumer, root.right, depth + 1);
+		}
+		consumer.accept (root.data, depth);
+		if (root.right != null)
+		{
+			traversePreOrder (consumer, root.right, depth + 1);
+		}
+	}
+
+	private void traversePostOrder (ObjIntConsumer<? super E> consumer, Node<? extends E> root, int depth)
+	{
+		if (root.left != null)
+		{
+			traversePreOrder (consumer, root.right, depth + 1);
+		}
+		if (root.right != null)
+		{
+			traversePreOrder (consumer, root.right, depth + 1);
+		}
+		consumer.accept (root.data, depth);
+	}
+
+	public <A, R> R collect (Collector<E, A, R> collector, TRAVERSE traverseOrder)
+	{
+		 Collector<ElementDepthPair<E>, A, R> modifiedCollector = Collector.of (
+						collector.supplier (),
+						(container, elementDepthTuple) -> collector.accumulator ()
+								.accept (container, elementDepthTuple.getElement ()),
+						collector.combiner (),
+						collector.finisher (),
+						// may type erasure genetics feel the pain i've felt for these couple hours
+						collector.characteristics ().toArray (
+								new Collector.Characteristics[collector.characteristics ().size()]));
+
+		 return collectWithDepth (modifiedCollector, traverseOrder);
 	}
 	
-	private void traverseInOrder(ObjIntConsumer<? super E> consumer, Node<? extends E> root, int depth)
+	@SuppressWarnings("unchecked")
+	public <A, R> R collectWithDepth (Collector<ElementDepthPair<E>, A, R> collector, TRAVERSE traverseOrder)
 	{
-		if(root.left != null)
+		A container = collector.supplier ().get ();
+		
+		forEachWithDepth ((element, depth) -> collector.accumulator ()
+				.accept (container, new ElementDepthPair<E> (element, depth))); 
+
+		if (collector.characteristics ().contains (Collector.Characteristics.IDENTITY_FINISH))
 		{
-			traversePreOrder(consumer, root.right, depth + 1);
+			return (R) container;
 		}
-		consumer.accept (root.data, depth);
-		if(root.right != null)
+		else
 		{
-			traversePreOrder(consumer, root.right, depth + 1);
-		}	
-	}
-	
-	private void traversePostOrder(ObjIntConsumer<? super E> consumer, Node<? extends E> root, int depth)
-	{
-		if(root.left != null)
-		{
-			traversePreOrder(consumer, root.right, depth + 1);
+			return collector.finisher ().apply (container);
 		}
-		if(root.right != null)
-		{
-			traversePreOrder(consumer, root.right, depth + 1);
-		}
-		consumer.accept (root.data, depth);
 	}
 
 	public enum TRAVERSE
@@ -147,6 +183,28 @@ public class BinaryTree<E>
 			this.data = data;
 			this.left = left;
 			this.right = right;
+		}
+	}
+
+	private static class ElementDepthPair<E>
+	{
+		private E	element;
+		private int	depth;
+
+		public ElementDepthPair (E element, int depth)
+		{
+			this.element = element;
+			this.depth = depth;
+		}
+
+		public E getElement ()
+		{
+			return element;
+		}
+
+		public int getDepth ()
+		{
+			return depth;
 		}
 	}
 }
